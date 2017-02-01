@@ -6,7 +6,7 @@ var ax, ay, az;
 var state = {};
 
 
-
+// DEPRECATED ON HTTP STREAMS!!
 window.addEventListener('devicemotion', function(e) {
   ax = e.accelerationIncludingGravity.x;
   ay = e.accelerationIncludingGravity.y;

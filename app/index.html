@@ -38,6 +38,7 @@
         <h1>'Allo, 'Allo!</h1>
         <p class="lead">Always a pleasure scaffolding your apps.</p>
         <p><a class="btn btn-lg btn-success" href="#">Splendid!</a></p>
+        <div id="chartContainer" style="height: 300px; width:100%;"></div>
       </div>
 
       <div class="row marketing">
@@ -59,7 +60,7 @@
       </div>
 
       <div class="footer">
-        <p>♥ from the Yeoman team</p>
+        <p>♥ from RUUB/p>
       </div>
     </div>
     
@@ -67,6 +68,8 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/webcomponentsjs/webcomponents.js"></script>
+    <script src="/bower_components/promise-polyfill/Promise.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     
@@ -84,9 +87,15 @@
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
     <!-- endbuild -->
+
+    <!-- build:js scripts/external.js -->
+    <script src= "scripts/jquery.canvasjs.min.js"></script>
+    <script src= "https://www.gstatic.com/charts/loader.js"</script>
+    <!-- endbuild -->
     
     <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
+    <script src="scripts/livegraph.js"></script>
     <!-- endbuild -->
   </body>
 </html>

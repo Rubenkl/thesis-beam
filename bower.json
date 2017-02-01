@@ -2,7 +2,8 @@
   "name": "thesis",
   "private": true,
   "dependencies": {
-    "bootstrap-sass": "~3.3.5"
+    "bootstrap-sass": "~3.3.5",
+    "google-chart": "^1.1.1"
   },
   "overrides": {
     "bootstrap-sass": {
