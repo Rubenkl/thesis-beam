@@ -1,0 +1,11 @@
+moving files to directory:
+
+$ mkdir include
+$ mv common include
+$ git rm -r common
+$ git add include/common
+
+what I did:
+manually move files to subdirectory
+git rm -r *
+git add ./folder/.
