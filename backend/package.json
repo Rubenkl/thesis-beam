@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "engines": {
+    "node": ">=4"
+  },
+  "dependencies": {
+    "socket.io": "^1.7.2"
+  },
+  "devDependencies" : {
+    "gulp": "^3.9.0",
+    "gulp-sftp": "^0.1.5"
+  }
+}
