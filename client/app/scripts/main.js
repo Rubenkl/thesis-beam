@@ -5,6 +5,33 @@ var ax, ay, az;
 
 var state = {};
 
+var dataTimer;
+
+$(document).ready(function() {
+  $('#chartContainer').attr('disabled', true);
+  $('.stopbutton').attr('disabled', true);
+  $('.stopbutton').hide();
+
+  $('#chartContainer').hide();
+
+
+  $('.startButton').click(function() {
+    startButtonClicked();
+  });
+
+  $('.stopButton').click(function() {
+    stopButtonClicked();
+  });
+});
+
+
+
+var socket = io('http://thesis-backend.ruub.eu');
+socket.on('news', function(data) {
+  console.log(data);
+  socket.emit('my other event', { hello: 'world' });
+});
+
 
 // DEPRECATED ON HTTP STREAMS!!
 window.addEventListener('devicemotion', function(e) {
@@ -19,11 +46,35 @@ window.ondeviceorientation = function(e) {
   gamma = Math.round(event.gamma);
 };
 
-startDataStream()
 
+function startButtonClicked() {
+  $('.startButton').removeClass('btn-danger');
+  $('.startButton').attr('disabled', true);
+  $('.startButton').hide();
+  $('.stopButton').show();
+  $('.stopButton').attr('disabled', false);
+
+  $('#chartContainer').attr('disabled', false);
+  $('#chartContainer').show();
+
+  startDataStream();
+  socket.emit('training', { test: 'Pressed button' });
+}
+
+function stopButtonClicked() {
+  clearInterval(dataTimer);
+  $('.startButton').removeClass('btn-danger');
+  $('.startButton').attr('disabled', false);
+  $('.startButton').show();
+  $('.stopButton').hide();
+  $('.stopButton').attr('disabled', true);
+  $('#chartContainer').attr('disabled', true);
+  $('#chartContainer').hide();
+
+}
 
 function startDataStream() {
-  setInterval(function() {
+  dataTimer = setInterval(function() {
     $('#ga').text('Alpha: ' + alpha);
     $('#gb').text('Beta: ' + beta);
     $('#gg').text('Gamma: ' + gamma);
@@ -32,5 +83,15 @@ function startDataStream() {
     $('#ay').text('Y: ' + Math.round(Math.abs(ay)));
     $('#az').text('Z: ' + Math.round(Math.abs(az)));
 
-  }, 1000 / 20);
+
+    socket.emit('training', {
+      alpha: this.alpha,
+      beta: this.beta,
+      gamma: this.gamma,
+      accX: Math.round(Math.abs(ax)),
+      accY: Math.round(Math.abs(ay)),
+      accZ: Math.round(Math.abs(az))
+    });
+
+  }, 300);
 }
