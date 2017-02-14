@@ -3,8 +3,6 @@ console.log('\'Allo \'Allo!');
 var alpha, beta, gamma;
 var ax, ay, az;
 
-var state = {};
-
 var dataTimer;
 
 $(document).ready(function() {
@@ -25,7 +23,7 @@ $(document).ready(function() {
 });
 
 
-
+// Remove this test stuff
 var socket = io('http://thesis-backend.ruub.eu');
 socket.on('news', function(data) {
   console.log(data);
@@ -58,7 +56,7 @@ function startButtonClicked() {
   $('#chartContainer').show();
 
   startDataStream();
-  socket.emit('training', { test: 'Pressed button' });
+  socket.emit('my other event', { test: 'Pressed button' });
 }
 
 function stopButtonClicked() {
