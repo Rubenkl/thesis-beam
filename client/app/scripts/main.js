@@ -1,5 +1,3 @@
-console.log('\'Allo \'Allo!');
-
 var alpha, beta, gamma;
 var ax, ay, az;
 
@@ -25,9 +23,17 @@ $(document).ready(function() {
 
 // Remove this test stuff
 var socket = io('http://thesis-backend.ruub.eu');
-socket.on('news', function(data) {
+socket.on('hello', function(data) {
   console.log(data);
-  socket.emit('my other event', { hello: 'world' });
+  socket.emit('helloClient', 'hello' );
+});
+
+socket.on('disconnect', function() {
+  $('.infobar').text('DISCONNECTED');
+});
+
+socket.on('connect', function() {
+  $('.infobar').text('Connected');
 });
 
 
