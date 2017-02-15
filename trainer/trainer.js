@@ -20,3 +20,10 @@ socket.on('disconnect', function(){
 });
 
 
+
+process.stdin.resume();//so the program will not close instantly
+
+process.on('SIGINT', function() {
+  socket.close();
+  setTimeout(function() {process.exit()} ,1500);
+});
