@@ -24,12 +24,39 @@
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+   
+ <!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thesis</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
+    
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
     
     <div class="container">
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li class="active"><a href="#">Viewer</a></li>
+          <li><a href="record.html">Record</a></li>
           <li><a href="#">Contact</a></li>
         </ul>
         <h3 class="text-muted">Thesis</h3>
@@ -41,6 +68,7 @@
 
         <div id="chartContainer" style="height: 300px; width:100%;">
         </div>
+
         <h3 class="infobar"></h3>
       </div>
 
@@ -98,9 +126,12 @@
 
 
 
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
+    <!-- build:js scripts/viewer.js -->
+    <script src="scripts/mainView.js"></script>
     <script src="scripts/livegraph.js"></script>
     <!-- endbuild -->
+
   </body>
+
 </html>
+

@@ -5,7 +5,7 @@ google.charts.load('current', { 'packages': ['corechart'] });
 
 
 var time = 0;
-var updateInterval = 350;
+var updateInterval = 400;
 var dataLength = 50; // number of dataPoints visible at any point
 
 var chart, data, options;
@@ -31,8 +31,7 @@ function drawChart() {
   chart = new google.visualization.LineChart(document.getElementById('chartContainer'));
   
   dps = [
-    ['Time', 'Alpha', 'Beta', 'Gamma'],
-    [0, 0, 0, 0]
+    ['Time', 'Alpha', 'Beta', 'Gamma']
   ];
 
   data = google.visualization.arrayToDataTable(dps,false);
