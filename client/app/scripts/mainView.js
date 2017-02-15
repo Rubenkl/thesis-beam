@@ -86,5 +86,5 @@ function startDataStream() {
     $('#ay').text('Y: ' + Math.round(Math.abs(ay)));
     $('#az').text('Z: ' + Math.round(Math.abs(az)));
 
-  }, 300);
+  }, 100);
 }

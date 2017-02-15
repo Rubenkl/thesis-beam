@@ -92,9 +92,9 @@ function startDataStream() {
       alpha: this.alpha,
       beta: this.beta,
       gamma: this.gamma,
-      accX: Math.round(Math.abs(ax)),
-      accY: Math.round(Math.abs(ay)),
-      accZ: Math.round(Math.abs(az))
+      accX: ax,
+      accY: ay,
+      accZ: az
     });
 
   }, 300);

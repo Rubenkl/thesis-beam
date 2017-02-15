@@ -31,7 +31,7 @@ function drawChart() {
   chart = new google.visualization.LineChart(document.getElementById('chartContainer'));
   
   dps = [
-    ['Time', 'Alpha', 'Beta', 'Gamma']
+    ['Time', 'X', 'Y', 'Z']
   ];
 
   data = google.visualization.arrayToDataTable(dps,false);
@@ -48,12 +48,12 @@ function drawChart() {
 
 var updateChart = function(count) {
   time++;
-  dps.push([time, alpha, beta, gamma]);
-  console.log('al: ' + alpha + ' b: '+ beta);
+  dps.push([time, ax, ay, az]);
+  console.log('x: ' + ax + ' y: '+ ay);
   
   if (dps.length > dataLength) {
     dps.shift();
-    dps[0] = ['Time', 'Alpha', 'beta', 'gamma'];
+    dps[0] = ['Time', 'X', 'Y', 'Z'];
   }
 
   data = google.visualization.arrayToDataTable(dps,false);
