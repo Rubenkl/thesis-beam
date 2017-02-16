@@ -2,9 +2,12 @@ var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 var fs = require('fs');
 
+var DATA_LIMIT = 2000;
+
 var sensorData = [];
 var machineLearners = [];
 var observers = [];
+var recorderID = null;
 
 app.listen(9292);
 
@@ -25,14 +28,26 @@ io.on('connection', function(socket) {
   socket.emit('hello', { hello: 'world' });
 
   socket.on('helloClient', function(data) {
-    console.log('New Recorder has connected to frontend');
+    console.log('New recorder connected ' + socket.id);
+  });
+
+  socket.on('newRecorder', function(data) {
+    recorderID = socket.id;
+    console.log('New recorder was assigned: ' + socket.id);
   });
 
   socket.on('training', function(data) {
-    console.log(data);
-    sensorData.push(data);
-    notifyLearners();
-    notifyObservers(data);
+    if (socket.id == recorderID) {
+      console.log(data);
+      sensorData.push(data);
+      notifyLearners();
+      notifyObservers(data);
+
+
+      //check if the sensor data isn't too large
+      checkDataOverFlow();
+    }
+
   });
 
   socket.on('machinelearner', function(data) {
@@ -52,14 +67,14 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function(data) {
     var deleteID = machineLearners.indexOf(socket.id);
     if (deleteID !== -1) {
-      console.log("Machinelearner disconnect ("+machineLearners[deleteID]+")");
+      console.log("Machinelearner disconnect (" + machineLearners[deleteID] + ")");
 
       machineLearners.splice(deleteID, 1);
       console.log("Machinelearners left: " + machineLearners.length);
     } else {
       deleteID = observers.indexOf(socket.id);
       if (deleteID !== -1) {
-        console.log("Observer disconnect ("+observers[deleteID]+")");
+        console.log("Observer disconnect (" + observers[deleteID] + ")");
         observers.splice(deleteID, 1);
       }
     }
@@ -67,7 +82,7 @@ io.on('connection', function(socket) {
   });
 
   function notifyLearners() {
-    console.log('notify learners, data length: ' + sensorData.length + ', learners: ' + machineLearners.length);
+    console.log('broadcasting, data: ' + sensorData.length + ', learners: ' + machineLearners.length + ", observers: " + observers.length);
 
     while (sensorData.length > 0 && machineLearners.length > 0) {
       var sensorPoint = sensorData.shift();
@@ -80,12 +95,19 @@ io.on('connection', function(socket) {
 
   function notifyObservers(data) {
     if (observers.length > 0) {
-      for (var i=0; i< observers.length; i++) {
+      for (var i = 0; i < observers.length; i++) {
         io.to(observers[i]).emit('sensorData', data);
       }
     }
   }
 
 });
+
+// Overflow prevention, must be removed later.
+function checkDataOverFlow() {
+  if (sensorData.length > DATA_LIMIT) {
+    sensorData = []; //maybe use sensorData.shift() to just leave out the first one (quite memory intensive)
+  }
+}
 
 io.on('error', function() {});
