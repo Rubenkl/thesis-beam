@@ -91,3 +91,23 @@ body {
     border-bottom: 0;
   }
 }
+
+
+.btn:hover {
+  background-color: #346392;
+  text-shadow: -1px 1px #27496d;
+}
+
+.btn:active {
+  background-color: #27496d;
+  text-shadow: -1px 1px #193047;
+}
+
+.btn:focus {
+  background-color: #27496d;
+  text-shadow: -1px 1px #193047;
+}
+
+.top-spacing {
+  margin-top:20px;
+}

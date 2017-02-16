@@ -2,10 +2,12 @@ var alpha, beta, gamma;
 var ax, ay, az;
 
 var dataTimer;
+var movement = 'updown';
+var actionType= 'training';
 
 $(document).ready(function() {
-  $('.stopbutton').attr('disabled', true);
-  $('.stopbutton').hide();
+  $('.stopButton').attr('disabled', true);
+  $('.stopButton').hide();
 
   $('.startButton').click(function() {
     startButtonClicked();
@@ -13,6 +15,21 @@ $(document).ready(function() {
 
   $('.stopButton').click(function() {
     stopButtonClicked();
+  });
+
+  //movement selection:
+  $('.btns-movement > .btn').click(function() {
+    $('.btns-movement > .btn').removeClass('active');
+    $(this).addClass('active');
+    movement = $(this).data('action');
+    console.log('movement: ' + movement);
+  });
+
+  $('.btns-actiontype > .btn').click(function() {
+    $('.btns-actiontype > .btn').removeClass('active');
+    $(this).addClass('active');
+    actionType = $(this).data('action');
+    console.log('action type: ' + actionType);
   });
 });
 
@@ -23,15 +40,15 @@ $('.infobar').text('Connecting..');
 
 socket.on('hello', function(data) {
   console.log(data);
-  socket.emit('helloClient', 'hello' );
+  socket.emit('helloClient', 'hello');
 });
 
 socket.on('disconnect', function() {
-  $('.infobar').text('DISCONNECTED');
+  $('.infobar').html('DISCONNECTED &#10060;');
 });
 
 socket.on('connect', function() {
-  $('.infobar').text('Connected');
+  $('.infobar').html('Connected &#10004;');
 });
 
 
@@ -56,23 +73,18 @@ function startButtonClicked() {
   $('.stopButton').show();
   $('.stopButton').attr('disabled', false);
 
-  $('#chartContainer').attr('disabled', false);
-  $('#chartContainer').show();
-
   startDataStream();
-  socket.emit('my other event', { test: 'Pressed button' });
+
+  socket.emit('newRecorder', 'new recorder taking over');
 }
 
 function stopButtonClicked() {
-  clearInterval(dataTimer);
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', false);
   $('.startButton').show();
   $('.stopButton').hide();
   $('.stopButton').attr('disabled', true);
-  $('#chartContainer').attr('disabled', true);
-  $('#chartContainer').hide();
-
+  clearInterval(dataTimer);
 }
 
 function startDataStream() {
@@ -88,6 +100,8 @@ function startDataStream() {
 
     socket.emit('training', {
       time: Date.now(),
+      movement: movement,
+      actionType: actionType,
       alpha: this.alpha,
       beta: this.beta,
       gamma: this.gamma,
