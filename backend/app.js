@@ -2,14 +2,23 @@ var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 var fs = require('fs');
 
+
+
 var DATA_LIMIT = 2000;
 
 var sensorData = [];
 var machineLearners = [];
 var observers = [];
 var recorderID = null;
+var args = process.argv.slice(2);
+
 
 app.listen(9292);
+
+// Verbose mode -v to output the raw data that was received.
+if (args[0] == "-v") {
+  console.log('[VERBOSE MODE]');
+}
 
 function handler(req, res) {
   fs.readFile(__dirname + '/index.html',
@@ -38,7 +47,10 @@ io.on('connection', function(socket) {
 
   socket.on('training', function(data) {
     if (socket.id == recorderID) {
-      console.log(data);
+      
+      if (args[0] == "-v") {
+        console.log(data);
+      }
       sensorData.push(data);
       notifyLearners();
       notifyObservers(data);
