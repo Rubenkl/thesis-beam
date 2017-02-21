@@ -47,7 +47,7 @@ io.on('connection', function(socket) {
 
   socket.on('training', function(data) {
     if (socket.id == recorderID) {
-      
+      data.recorderID = recorderID.replace(/[^a-zA-Z0-9]/g, '');
       if (args[0] == "-v") {
         console.log(data);
       }
