@@ -4,7 +4,7 @@ var fs = require('fs');
 
 
 
-var DATA_LIMIT = 2000;
+var DATA_LIMIT = 20000;
 
 var sensorData = [];
 var machineLearners = [];
