@@ -1,3 +1,4 @@
+var noSleep = new NoSleep();
 var alpha, beta, gamma;
 var ax, ay, az;
 
@@ -67,6 +68,7 @@ window.ondeviceorientation = function(e) {
 
 
 function startButtonClicked() {
+  noSleep.enable();
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', true);
   $('.startButton').hide();
@@ -79,6 +81,7 @@ function startButtonClicked() {
 }
 
 function stopButtonClicked() {
+  noSleep.disable();
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', false);
   $('.startButton').show();

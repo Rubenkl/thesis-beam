@@ -1,3 +1,4 @@
+var noSleep = new NoSleep();
 var alpha = 0, beta = 0, gamma = 0;
 var ax = 0, ay = 0, az =0;
 var dataTime = Date.now();
@@ -52,6 +53,7 @@ socket.on('sensorData', function(data) {
 
 
 function startButtonClicked() {
+  noSleep.enable();
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', true);
   $('.startButton').hide();
@@ -66,6 +68,7 @@ function startButtonClicked() {
 
 function stopButtonClicked() {
   clearInterval(dataTimer);
+  noSleep.disable();
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', false);
   $('.startButton').show();
