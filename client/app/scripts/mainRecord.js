@@ -1,6 +1,7 @@
 var noSleep = new NoSleep();
 var alpha, beta, gamma;
 var ax, ay, az;
+var clicks = 0;
 
 var dataTimer;
 var movement = 'updown';
@@ -69,6 +70,7 @@ window.ondeviceorientation = function(e) {
 
 function startButtonClicked() {
   noSleep.enable();
+  clicks++;
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', true);
   $('.startButton').hide();
@@ -79,6 +81,7 @@ function startButtonClicked() {
 
   // 10 seconds temporary training:
   setTimeout(function(){ stopButtonClicked() }, 10000);
+
   socket.emit('newRecorder', 'new recorder taking over');
 }
 
@@ -105,6 +108,7 @@ function startDataStream() {
 
     socket.emit('training', {
       time: Date.now(),
+      sessionCount: clicks,
       movement: movement,
       actionType: actionType,
       alpha: this.alpha,
