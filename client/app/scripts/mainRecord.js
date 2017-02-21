@@ -74,9 +74,11 @@ function startButtonClicked() {
   $('.startButton').hide();
   $('.stopButton').show();
   $('.stopButton').attr('disabled', false);
-
+ 
   startDataStream();
 
+  // 10 seconds temporary training:
+  setTimeout(function(){ stopButtonClicked() }, 10000);
   socket.emit('newRecorder', 'new recorder taking over');
 }
 
@@ -113,5 +115,5 @@ function startDataStream() {
       accZ: az
     });
 
-  }, 100);
+  }, 50);
 }
