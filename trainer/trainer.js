@@ -18,7 +18,7 @@ socket.on('hello', function(data) {
 socket.on('sensorData', function(data) {
   console.log(data);
   if (data.recorderID == recorderID && data.sessionCount == sessionCount && data.actionType == lastActionType && data.movement == lastMovement) {
-    writeData(data.time + ',' + data.alpha + ',' + data.beta + ',' + data.gamma +','+data.accX + ',' + data.accY + ',' + data.accZ + '\n');
+    writeData(data.time + ',' + data.alpha + ',' + data.beta + ',' + data.gamma +','+data.accX + ',' + data.accY + ',' + data.accZ + ',' + data.movement + '\n');
   } else {
     recorderID = data.recorderID;
     lastMovement = data.movement;
@@ -38,7 +38,7 @@ socket.on('disconnect', function(){
 });
 
 function initWriteFile(filename) {
-  var firstLine = 'timestamp,alpha,beta,gamma,accX,accY,accZ\n';
+  var firstLine = 'timestamp,alpha,beta,gamma,accX,accY,accZ,movement\n';
   stream = fs.createWriteStream(filepath);
   stream.write(firstLine);
 }
