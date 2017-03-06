@@ -1,11 +1,12 @@
 var noSleep = new NoSleep();
 var alpha, beta, gamma;
 var ax, ay, az;
-var clicks = 0;
 
 var dataTimer;
 var movement = 'updown';
 var actionType= 'training';
+var clicks = 0;
+
 
 $(document).ready(function() {
   $('.stopButton').attr('disabled', true);
@@ -69,30 +70,29 @@ window.ondeviceorientation = function(e) {
 
 
 function startButtonClicked() {
-  noSleep.enable();
   clicks++;
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', true);
   $('.startButton').hide();
-  $('.stopButton').show();
   $('.stopButton').attr('disabled', false);
- 
+  $('.stopButton').show();
   startDataStream();
 
   // 10 seconds temporary training:
-  setTimeout(function(){ stopButtonClicked() }, 10000);
+  setTimeout(function(){ stopButtonClicked(); }, 10000);
+  noSleep.enable();
 
   socket.emit('newRecorder', 'new recorder taking over');
 }
 
 function stopButtonClicked() {
-  noSleep.disable();
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', false);
-  $('.startButton').show();
   $('.stopButton').hide();
+  $('.startButton').show();
   $('.stopButton').attr('disabled', true);
   clearInterval(dataTimer);
+  noSleep.disable();
 }
 
 function startDataStream() {
