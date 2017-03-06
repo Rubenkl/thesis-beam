@@ -48,7 +48,8 @@ training_labels = []
 files = getDataFileNames("training")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-  data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  #data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   
   #flatten all the data, don't really know why you want to separate all the contained data into a flat field.... (just ask this)
   data = normalize(np.ravel(data))
@@ -70,7 +71,9 @@ test_labels =[]
 files = getDataFileNames("test")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-  data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  #data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+
 
   #same story here
   data = normalize(np.ravel(data))
@@ -138,7 +141,7 @@ clf1.fit(training_data, training_labels)
 
 
 for index, t in enumerate(test_data):
-  print("KnnDtwClassifier prediction for " + str(test_labels[index]) + " = " + str(clf1.predict(t)))
+  print("KNN-DTW prediction for " + str(test_labels[index]) + " = " + str(clf1.predict(t)))
 
 #plotting:
 
