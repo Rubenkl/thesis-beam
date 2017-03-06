@@ -1,3 +1,6 @@
+# This second version was supposed to utizile the scipy library. But DTW is already a measure to calculate distance between two nodes,
+# so it is not possible to combine it with scipy.
+
 import docopt
 import sklearn
 import numpy as np
@@ -13,6 +16,7 @@ import os #filesystem reads
 #for knn shit
 from tinylearn import KnnDtwClassifier
 from tinylearn import CommonClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 
 
@@ -39,11 +43,16 @@ def normalize(v):
         return v
     return v / norm
 
+def calculateDTW(X, Y):
+  dtwX = fastdtw(X[:,0], Y[:,0])[0]
+  dtwY = fastdtw(X[:,1], Y[:,1])[0]
+  dtwZ = fastdtw(X[:,2], Y[:,2])[0]
+  return dtwX + dtwY + dtwZ
+
+
 
 # ------------------- MAIN ------------------------------------
 
-
-# -- training --
 
 training_data = []
 training_labels = []
@@ -51,11 +60,10 @@ training_labels = []
 files = getDataFileNames("training")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-  data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  data = np.array([dataFile['accX'], dataFile['accY'], dataFile['accZ']])
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   
   #flatten all the data, don't really know why you want to separate all the contained data into a flat field.... (just ask this)
-  data = normalize(np.ravel(data))
 
   training_data.append(data)
   if "updown" in trainingFile:
@@ -68,23 +76,19 @@ for trainingFile in files:
 print("label size:", len(training_data))
 print("data size:", len(training_labels))
 
-
-
-# -- testing --
-
 test_data =[]
 test_labels =[]
 
 files = getDataFileNames("test")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-  data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  data = np.array([dataFile['accX'], dataFile['accY'], dataFile['accZ']])
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  
+
   #same story here
   data = normalize(np.ravel(data))
-  
-  
+
+
   test_data.append(data)
   if "updown" in trainingFile:
     test_labels.append("updown")
