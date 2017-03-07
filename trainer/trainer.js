@@ -7,11 +7,11 @@ var CLASSIFY_TIME = 5000; //5 seconds
 var folder = Date.now();
 
 // train/test
-var recorderID = 00000;
+var recorderID = 0;
 var filepath, stream, lastMovement, lastActionType, sessionCount;
 
 // classify
-var cPath, cStream, cSessionCount, cRecorderID = 00000, cFirstTime;
+var cPath, cStream, cSessionCount, cRecorderID = 0, cFirstTime;
 
 socket.on('connect', function (data) {
     socket.emit('machinelearner', { name: 'Ruben PC'});
@@ -74,13 +74,18 @@ function classifyData(data) {
   if (data.recorderID == cRecorderID && data.sessionCount == cSessionCount && (Date.now() - cFirstTime) < CLASSIFY_TIME) {
     writeData(cStream, data.time + ',' + data.alpha + ',' + data.beta + ',' + data.gamma +','+data.accX + ',' + data.accY + ',' + data.accZ + ',' + "NULL" + '\n');
   } else {
+    if (cStream)
+      cStream.end();
     cFirstTime = Date.now();
     cRecorderID = data.recorderID;
     cLastTime = data.time;
     cSessionCount = data.sessionCount;
 
-    cPath = 'data/CLASSIFY/' + recorderID + '-' + sessionCount + '-' + cFirstTime +  '.csv';
-    initWriteFile(cPath);
+    cPath = 'data/CLASSIFY/' + cRecorderID + '-' + cSessionCount + '-' + cFirstTime +  '.csv';
+
+    var firstLine = 'timestamp,alpha,beta,gamma,accX,accY,accZ,movement\n';
+    cStream = fs.createWriteStream(cPath);
+    cStream.write(firstLine);
   }
 }
 

@@ -42,7 +42,7 @@ io.on('connection', function(socket) {
 
   socket.on('newRecorder', function(data) {
     recorderID = socket.id;
-    console.log('New recorder was assigned: ' + socket.id);
+    console.log('New recorder was assigned: ' + socket.id + '(' + data + ')');
   });
 
   socket.on('training', function(data) {
