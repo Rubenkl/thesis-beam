@@ -96,16 +96,8 @@ gn.init(gnArgs).then(function() {
   gn.start(function(data) {
     //console.log("alpha "+ data.dm.alpha);
     var isAvailable = gn.isAvailable();
-    if(!isAvailable.deviceOrientationAvailable) {
-      logger('Device orientation is not available.'); 
-      gn.stop();
-    }
-    if(!isAvailable.accelerationIncludingGravityAvailable) {
-      logger('Device acceleration incl. gravity is not available.');
-      gn.stop();
-    } 
-    if(!isAvailable.rotationRateAvailable) {
-      logger('Device rotation rate is not available.');
+    if(!isAvailable.deviceOrientationAvailable && !isAvailable.accelerationIncludingGravityAvailable && !isAvailable.rotationRateAvailable) {
+      logger('Accelerometer & gyroscope not available.'); 
       gn.stop();
     }
 
