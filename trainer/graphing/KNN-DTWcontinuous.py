@@ -18,7 +18,7 @@ from helpers import FolderWatch #custom module, yay!
 
 
 DATA_FOLDER = "../data/"
-CLASSIFY_FOLDER = "../data/CLASSIFY/"
+CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
 
 # Helper functions:
@@ -87,6 +87,16 @@ def classify(classiFile):
     FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
   else:
     print("classifying: " + previousFile)
+
+    dataFile = pd.read_csv(previousFile, header=0)
+    data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+    data = normalize(np.ravel(data))
+    print("Guess: " + str(clf1.predict(data)))
+
+    os.remove(previousFile)
+    previousFile = classiFile
+    FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
+
 
 # CONTINUE WITH THE TESTINT SHIT ITSELF HERE!!
 
