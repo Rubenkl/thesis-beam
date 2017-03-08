@@ -1,4 +1,7 @@
 var noSleep = new NoSleep();
+
+var Promise = Promise || ES6Promise.Promise; //for some weird shit
+var gn = new GyroNorm();
 var alpha, beta, gamma;
 var ax, ay, az;
 
@@ -6,7 +9,12 @@ var dataTimer;
 var movement = 'updown';
 var actionType= 'training';
 var clicks = 0;
+var streaming = false;
 
+var gnArgs = {
+  decimalCount: 4,
+  logger: logger
+};
 
 $(document).ready(function() {
   $('.stopButton').attr('disabled', true);
@@ -55,29 +63,16 @@ socket.on('connect', function() {
 });
 
 
-// DEPRECATED ON HTTP STREAMS!!
-window.addEventListener('devicemotion', function(e) {
-  ax = e.accelerationIncludingGravity.x;
-  ay = e.accelerationIncludingGravity.y;
-  az = e.accelerationIncludingGravity.z;
-});
-
-window.ondeviceorientation = function(e) {
-  alpha = Math.round(event.alpha);
-  beta = Math.round(event.beta);
-  gamma = Math.round(event.gamma);
-};
-
 
 function startButtonClicked() {
   clicks++;
+  streaming = true;
   $('.startButton').removeClass('btn-danger');
   $('.startButton').attr('disabled', true);
   $('.startButton').hide();
   $('.stopButton').attr('disabled', false);
   $('.stopButton').show();
-  startDataStream();
-
+  
   // 10 seconds temporary training:
   setTimeout(function(){ stopButtonClicked(); }, 10000);
   noSleep.enable();
@@ -91,33 +86,66 @@ function stopButtonClicked() {
   $('.stopButton').hide();
   $('.startButton').show();
   $('.stopButton').attr('disabled', true);
-  clearInterval(dataTimer);
+  clearInterval(dataTimer); //<-- DELETE WHEN USING GYRONORM
+  streaming = false;
   noSleep.disable();
 }
 
-function startDataStream() {
-  dataTimer = setInterval(function() {
-    $('#ga').text('Alpha: ' + alpha);
-    $('#gb').text('Beta: ' + beta);
-    $('#gg').text('Gamma: ' + gamma);
 
-    $('#ax').text('X: ' + Math.round(Math.abs(ax)));
-    $('#ay').text('Y: ' + Math.round(Math.abs(ay)));
-    $('#az').text('Z: ' + Math.round(Math.abs(az)));
+gn.init(gnArgs).then(function() {
+  gn.start(function(data) {
+    //console.log("alpha "+ data.dm.alpha);
+    var isAvailable = gn.isAvailable();
+    if(!isAvailable.deviceOrientationAvailable) {
+      logger('Device orientation is not available.'); 
+      gn.stop();
+    }
+    if(!isAvailable.accelerationIncludingGravityAvailable) {
+      logger('Device acceleration incl. gravity is not available.');
+      gn.stop();
+    } 
+    if(!isAvailable.rotationRateAvailable) {
+      logger('Device rotation rate is not available.');
+      gn.stop();
+    }
+
+    $('#ga').text('Alpha: ' + data.dm.alpha);
+    $('#gb').text('Beta: ' + data.dm.beta);
+    $('#gg').text('Gamma: ' + data.dm.gamma);
+
+    $('#ax').text('X: ' + data.dm.gx);
+    $('#ay').text('Y: ' + data.dm.gy);
+    $('#az').text('Z: ' + data.dm.gz);
 
 
-    socket.emit('training', {
-      time: Date.now(),
-      sessionCount: clicks,
-      movement: movement,
-      actionType: actionType,
-      alpha: this.alpha,
-      beta: this.beta,
-      gamma: this.gamma,
-      accX: ax,
-      accY: ay,
-      accZ: az
-    });
+    if (streaming) {
+      socket.emit('training', {
+        time: Date.now(),
+        sessionCount: clicks,
+        movement: movement,
+        actionType: actionType,
+        alpha: data.dm.alpha,
+        beta: data.dm.beta,
+        gamma: data.dm.gamma,
+        accX: data.dm.gx,
+        accY: data.dm.gy,
+        accZ: data.dm.gz
+      });
+    }
+  });
+}).catch(function(e) {
+  // Accelerometer & Gyroscope not supported
+  logger('No Accelerometer & Gyroscope detected..');
 
-  }, 50);
+});
+
+function logger(data) {
+  var html = ` 
+  <div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> ` + data + `
+  </div>
+  `;
+  $(html).insertAfter('.header');
+
 }
