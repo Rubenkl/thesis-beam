@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 
 // Remove this test stuff
-var socket = io('http://thesis-backend.ruub.eu');
+var socket = io('https://thesis-backend.ruub.eu');
 $('.infobar').text('Connecting..');
 
 socket.on('hello', function(data) {
