@@ -12,16 +12,13 @@ from scipy import fftpack #for fourier analysis
 #original_headers = list(dataFile.columns.values)
 N = 198
 
-time = np.linspace(0,20, 200)
-time = time.reshape(1,-1)
 
-#dataFile = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
-dataFile = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
+dataFile = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
+#dataFile = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
 dataA = dataFile['gamma'].values
-dataA = dataA.reshape(1, -1)
 dataB = skNormalize(dataA)
 
-
+time = np.linspace(0,20, dataFile.shape[0])
 
 def estimated_autocorrelation(x):
     n = len(x)
@@ -36,8 +33,8 @@ def estimated_autocorrelation(x):
 
 #plot raw data and autocorrelation:
 fig = plt.figure(figsize=(12,4))
-_ = plt.plot(time[0], dataA[0], label='A')
-_ = plt.plot(time[0], estimated_autocorrelation(dataA[0]), label='Correlated')
+_ = plt.plot(time, dataA, label='A')
+_ = plt.plot(time, estimated_autocorrelation(dataA), label='Correlated')
 _ = plt.title('Datafile A')
 _ = plt.ylabel('Amplitude')
 _ = plt.xlabel('Time')
@@ -51,13 +48,14 @@ plt.show()
 Fs=1000 / 50 # equals 20hz
 T = 1.0 / 50.0
 
-X = fftpack.fft(estimated_autocorrelation(dataA[0]))
-freqs = fftpack.fftfreq(len(dataA[0])) * Fs
+X = fftpack.fft(estimated_autocorrelation(dataA))
+freqs = fftpack.fftfreq(len(dataA)) * Fs
 positive_freqs = freqs[np.where(freqs > 0)]
 magnitudes = X[np.where(freqs >= 0)]
-peak = np.argmax(magnitudes)
+peakIndex = np.argmax(magnitudes)
+BPM = positive_freqs[peakIndex] * 60
 
-print("Peak: %d" % peak)
+print("Peak: %s Hz, BPM: %s" % (positive_freqs[peakIndex], BPM))
 
 fig, ax = plt.subplots()
 indices = np.where(X == X.max())
@@ -68,14 +66,3 @@ ax.set_ylabel('Frequency Domain (Spectrum) Magnitude')
 ax.set_xlim(0, Fs / 2)
 ax.set_ylim(0, 30)
 plt.show()
-
-
-#from internet, fix the implementation here:
-
-ps = np.abs(np.fft.fft(data))**2
-
-time_step = 1 / 50
-freqs = np.fft.fftfreq(data.size, time_step)
-idx = np.argsort(freqs)
-
-plt.plot(freqs[idx], ps[idx])
