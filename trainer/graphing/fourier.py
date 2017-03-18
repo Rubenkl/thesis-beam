@@ -29,8 +29,6 @@ dataCorrelated = estimated_autocorrelation(data)
 
 time = np.linspace(0,10, data.shape[0])
 
-fdataD = fftpack.fft(data)
-
 N = dataFile.shape[0]
 
 # from: https://raw.githubusercontent.com/markdregan/K-Nearest-Neighbors-with-Dynamic-Time-Warping/master/K_Nearest_Neighbor_Dynamic_Time_Warping.ipynb
