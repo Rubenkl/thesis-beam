@@ -132,11 +132,22 @@ class DataAnalyzer(object):
       data: data object to be normalized (will return a deep copy)
     '''
     data = dataObject.copy() #make sure to create a copy, otherwise the same object will just be altered!!
-    data['accX'] = skNorm(data['accX'])[0] #took me hours to figure out why indexes weren't correct. Never forget the [0]
-    data['accX'] = skNorm(data['accX'])[0]
-    data['accY'] = skNorm(data['accY'])[0]
-    data['accZ'] = skNorm(data['accZ'])[0]
-    data['alpha'] = skNorm(data['alpha'])[0]
-    data['beta'] = skNorm(data['beta'])[0]
-    data['gamma'] = skNorm(data['gamma'])[0]
+    data['accX'] = skNorm([data['accX']])[0] #took me hours to figure out why indexes weren't correct. Never forget the [0]
+    data['accX'] = skNorm([data['accX']])[0]
+    data['accY'] = skNorm([data['accY']])[0]
+    data['accZ'] = skNorm([data['accZ']])[0]
+    data['alpha'] = skNorm([data['alpha']])[0]
+    data['beta'] = skNorm([data['beta']])[0]
+    data['gamma'] = skNorm([data['gamma']])[0]
+    return data
+
+  def autoCorrelate(self, dataObject):
+    data = dataObject.copy()
+    data['accX'] = StreamDataAnalyzer(data['accX']).getAutocorrelation()
+    data['accY'] = StreamDataAnalyzer(data['accY']).getAutocorrelation()
+    data['accZ'] = StreamDataAnalyzer(data['accZ']).getAutocorrelation()
+    data['alpha'] = StreamDataAnalyzer(data['alpha']).getAutocorrelation()
+    data['beta'] = StreamDataAnalyzer(data['beta']).getAutocorrelation()
+    data['gamma'] = StreamDataAnalyzer(data['gamma']).getAutocorrelation()
+
     return data

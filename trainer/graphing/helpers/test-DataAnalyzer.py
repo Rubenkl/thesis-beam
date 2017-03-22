@@ -36,13 +36,17 @@ print(output['detectedBPM'])
 analyzer = DataAnalyzer.DataAnalyzer()
 
 dataFile = analyzer.normalize(dataFile)
-dataFile2 = analyzer.normalize(dataFile2)
-dataFile3 = analyzer.normalize(dataFile3)
-dataFile4 = analyzer.normalize(dataFile4)
+print(dataFile)
+#dataFile2 = analyzer.normalize(dataFile2)
+#dataFile3 = analyzer.normalize(dataFile3)
+#dataFile4 = analyzer.normalize(dataFile4)
 
-print("smallest:\t", analyzer.DTWSimilarity(dataFile, dataFile2))
-print("medium:\t\t", analyzer.DTWSimilarity(dataFile2, dataFile3))
-print("large:\t\t", analyzer.DTWSimilarity(dataFile2, dataFile4))
 
+
+#print("smallest:\t", analyzer.DTWSimilarity(dataFile, dataFile2))
+#print("medium:\t\t", analyzer.DTWSimilarity(dataFile2, dataFile3))
+#print("large:\t\t", analyzer.DTWSimilarity(dataFile2, dataFile4))
+
+#print(analyzer.autoCorrelate(dataFile2))
 
 
