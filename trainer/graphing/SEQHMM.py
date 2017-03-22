@@ -2,18 +2,14 @@ import docopt
 import sklearn
 import numpy as np
 import pandas as pd
-from scipy.spatial.distance import euclidean
 import matplotlib.pylab as plt
-
-from scipy import fftpack
 
 import os #filesystem reads
 
-#for knn shit
-from tinylearn import KnnDtwClassifier
-from tinylearn import CommonClassifier
+#for supervised hmm shit
+from seqlearn.hmm import MultinomialHMM
 
-from helpers import FolderWatch #custom module, yay!
+import helpers #custom modules, yay!
 
 
 DATA_FOLDER = "../data/"
@@ -33,32 +29,26 @@ def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
   return output
 
 
-#FROM THE TINYLEARN.PY:
-# Utility function for normalizing numpy arrays
-def normalize(v):
-    norm = np.linalg.norm(v)
-    if norm == 0:
-        return v
-    return v / norm
-
 
 # ------------------- MAIN ------------------------------------
 
+model = MultinomialHMM(decode='viterbi', alpha=0.01)
 
 # -- training --
 
 training_data = []
 training_labels = []
+training_data_length = []
 
 files = getDataFileNames("training")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-  data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  data = [dataFile['accX'][:199], dataFile['accY'][:199], dataFile['accZ'][:199]]
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   
-  #flatten all the data, don't really know why you want to separate all the contained data into a flat field.... (just ask this)
-  data = normalize(np.ravel(data))
-
+  length = len(dataFile['accX'])
+  training_data_length.append([length, length, length]) # 3 items because X, Y, Z data
+  
   training_data.append(data)
   if "updown" in trainingFile:
     training_labels.append("updown")
@@ -70,53 +60,22 @@ for trainingFile in files:
 print("label size:", len(training_data))
 print("data size:", len(training_labels))
 
-clf1 = KnnDtwClassifier(1)
-clf1.fit(training_data, training_labels)
+model.fit(training_data, training_labels, training_data_length)
 
+#----- testing -------
 
+test_data = []
+test_labels = []
+test_data_length = []
 
-# -- testing --
-global previousFile
-previousFile = "none"
-
-def classify(classiFile):
-  global previousFile
-  if (previousFile == "none"):
-    previousFile = classiFile
-    FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-  else:
-    print("classifying: " + previousFile)
-
-    dataFile = pd.read_csv(previousFile, header=0)
-    data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-    data = normalize(np.ravel(data))
-    print("Guess: " + str(clf1.predict(data)))
-
-    os.remove(previousFile)
-    previousFile = classiFile
-    FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-
-
-# CONTINUE WITH THE TESTINT SHIT ITSELF HERE!!
-
-
-FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-
-
-test_data =[]
-test_labels =[]
-
-'''
 
 files = getDataFileNames("test")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  
-  #same story here
-  data = normalize(np.ravel(data))
-  
+  length = len(dataFile['accX'])
+  test_data_length.append([length, length, length])
   
   test_data.append(data)
   if "updown" in trainingFile:
@@ -127,6 +86,7 @@ for trainingFile in files:
     test_labels.append("rotateclockwise")
 
 
+
 print("label size:", len(test_data))
 print("data size:", len(test_labels))
 
@@ -134,6 +94,5 @@ print("data size:", len(test_labels))
 
 
 for index, t in enumerate(test_data):
-  print("KNN-DTW prediction for " + str(test_labels[index]) + " = " + str(clf1.predict(t)))
+  print("HMM prediction for " + str(test_labels[index]) + " = " + str(model.predict(t)))
 
-'''
