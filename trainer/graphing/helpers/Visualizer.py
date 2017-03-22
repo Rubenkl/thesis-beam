@@ -71,3 +71,19 @@ class Visualizer(object):
       ax1.plot(time, analyzer.getAutocorrelation())
     plt.show()
 
+  def visualizeFFT(self, fft, positive_freqs, title = 'FFT', Fs = 1000/50):
+    '''
+    Visualizes the Fourier transformed data.
+
+    Arguments:
+      fft: fourier transformed data. ex: fftdata.fft(data)
+      positive_freqs: positive frequencies that were derived
+      Fs: Sampling rate. Default = 20Hz (1000/50)
+    '''
+    fig, ax = plt.subplots()
+    ax.set_title(title)
+    ax.stem(positive_freqs, np.abs(fft[:positive_freqs.size])) # was: X[:N//2]
+    ax.set_xlabel('Frequency in Hertz [Hz]')
+    ax.set_ylabel('Frequency Domain (Spectrum) Magnitude')
+    ax.set_xlim(0, Fs / 2)
+    plt.show()
