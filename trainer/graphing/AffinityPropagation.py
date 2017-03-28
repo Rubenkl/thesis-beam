@@ -4,6 +4,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 import pandas as pd
 import matplotlib.pylab as plt
+import itertools
 
 import os #filesystem reads
 
@@ -58,13 +59,21 @@ print("label size:", len(training_data))
 print("data size:", len(training_labels))
 
 
-training_matrix = []
+training_matrix = np.zeros((len(training_data),len(training_data)))
 
+'''
 for data in training_data:
   row = []
   for secondData in training_data:
     row.append(analyzer.DTWSimilarity(data, secondData))
   training_matrix.append(row)
+'''
+
+#Enhanced method for creating the  DTW Similarity matrix. Now only computes the first half of the matrix
+for n in itertools.combinations(np.arange(len(training_data)), 2):
+  calculation = analyzer.DTWSimilarity(training_data[n[0]], training_data[n[1]])
+  training_matrix[n[0], n[1]] = calculation
+  training_matrix[n[1], n[0]] = calculation
 
 model = KNeighborsClassifier()
 #model = AffinityPropagation()
