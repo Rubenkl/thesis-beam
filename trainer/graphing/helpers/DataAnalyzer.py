@@ -2,6 +2,7 @@ import numpy as np
 from scipy import fftpack
 from fastdtw import fastdtw
 from sklearn.preprocessing import normalize as skNorm
+import scipy.stats as stats
 
 
   
@@ -132,13 +133,50 @@ class DataAnalyzer(object):
       data: data object to be normalized (will return a deep copy)
     '''
     data = dataObject.copy() #make sure to create a copy, otherwise the same object will just be altered!!
-    data['accX'] = skNorm([data['accX']])[0] #took me hours to figure out why indexes weren't correct. Never forget the [0]
-    data['accX'] = skNorm([data['accX']])[0]
-    data['accY'] = skNorm([data['accY']])[0]
-    data['accZ'] = skNorm([data['accZ']])[0]
-    data['alpha'] = skNorm([data['alpha']])[0]
-    data['beta'] = skNorm([data['beta']])[0]
-    data['gamma'] = skNorm([data['gamma']])[0]
+    
+
+    # COMBINED NORMALIZATION FOR ALPHA/BETA/GAMMA:
+    dataRaw = []
+    dataRaw.extend(dataObject['alpha'].values)
+    dataRaw.extend(dataObject['beta'].values)
+    dataRaw.extend(dataObject['gamma'].values)
+    dataRaw = skNorm([dataRaw])[0] #weird to use as input, but for the scikit you should append a deeper dimension. Fix is to immediately escape out of it.
+
+    #split the stacked array back into original parts:
+    currIter = 0
+    dataAlpha = dataRaw[:len(dataObject['alpha'].values)]
+    currIter = len(dataObject['alpha'].values);
+    dataBeta = dataRaw[currIter:currIter + len(dataObject['beta'].values)]
+    currIter += len(dataObject['beta'].values)
+    dataGamma = dataRaw[currIter:currIter + len(dataObject['gamma'].values)]
+
+    # COMBINED NORMALIZATION FOR X/Y/Z:
+    dataRaw = []
+    dataRaw.extend(dataObject['accX'].values)
+    dataRaw.extend(dataObject['accY'].values)
+    dataRaw.extend(dataObject['accZ'].values)
+    dataRaw = skNorm([dataRaw])[0] #weird to use as input, but for the scikit you should append a deeper dimension. Fix is to immediately escape out of it.
+
+    #split the stacked array back into original parts:
+    currIter = 0
+    dataaccX = dataRaw[:len(dataObject['accX'].values)]
+    currIter = len(dataObject['accX'].values);
+    dataaccY = dataRaw[currIter:currIter + len(dataObject['accY'].values)]
+    currIter += len(dataObject['accY'].values)
+    dataaccZ = dataRaw[currIter:currIter + len(dataObject['accZ'].values)]
+
+
+
+    #set the new calculated values:
+    data['accX'] = dataaccX
+    data['accY'] = dataaccY
+    data['accZ'] = dataaccZ
+    data['alpha'] = dataAlpha
+    data['beta'] = dataBeta
+    data['gamma'] = dataGamma
+    #data['alpha'] = skNorm([data['alpha']])[0] #took me hours to figure out why indexes weren't correct. Never forget the [0]
+    #data['beta'] = skNorm([data['beta']])[0]
+    #data['gamma'] = skNorm([data['gamma']])[0]
     return data
 
   def autoCorrelate(self, dataObject):
