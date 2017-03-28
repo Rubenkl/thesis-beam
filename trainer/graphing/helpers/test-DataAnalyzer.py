@@ -21,6 +21,12 @@ dataAlpha = dataFile['alpha'].values
 dataBeta = dataFile['beta'].values
 dataGamma = dataFile['gamma'].values
 
+analyzer = DataAnalyzer.AutoAnalyzer(dataFile)
+visualizer = Visualizer.Visualizer(dataFile)
+
+
+print(analyzer.getBPM(autocorrelated=True))
+
 '''
 dataRaw = []
 dataRaw.extend(dataFile['accX'].values)
@@ -41,8 +47,7 @@ print(dataFile['accZ'].values == dataZ)
 '''
 
 
-analyzer = DataAnalyzer.DataAnalyzer()
-visualizer = Visualizer.Visualizer(dataFile)
+'''
 
 normalizeAlpha = skNorm([dataFile['beta']])[0]
 out = analyzer.normalize(dataFile)
@@ -50,7 +55,7 @@ out = analyzer.normalize(dataFile)
 visualizer.visualizeStream(normalizeAlpha)
 visualizer.visualizeStream(out['alpha'])
 
-
+'''
 
 '''
 output = analyzer.getPeriodInfo()

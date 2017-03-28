@@ -5,6 +5,7 @@ from sklearn.preprocessing import normalize as skNorm
 import scipy.stats as stats
 
 
+
   
 class StreamDataAnalyzer(object):
   '''Analyzes data: FFT, Autocorrelation, BPM & Freq detection'''
@@ -155,7 +156,7 @@ class DataAnalyzer(object):
     dataRaw.extend(dataObject['accX'].values)
     dataRaw.extend(dataObject['accY'].values)
     dataRaw.extend(dataObject['accZ'].values)
-    dataRaw = skNorm([dataRaw])[0] #weird to use as input, but for the scikit you should append a deeper dimension. Fix is to immediately escape out of it.
+    dataRaw = skNorm([dataRaw])[0] 
 
     #split the stacked array back into original parts:
     currIter = 0
@@ -189,3 +190,31 @@ class DataAnalyzer(object):
     data['gamma'] = StreamDataAnalyzer(data['gamma']).getAutocorrelation()
 
     return data
+
+class AutoAnalyzer(object):
+  '''Uses the data Object which automatically detects the best stream to use
+  Returns:
+    BPM which it thinks it is the closest by. This is a result of the median of all the calculated BPMs.
+  '''
+  def __init__(self, dataObject):
+    self.data = dataObject
+
+  def getBPM(self, autocorrelated = False, printAll = False):
+    data = self.data.copy()
+    analyzer = DataAnalyzer()
+    if (autocorrelated):
+      data = analyzer.autoCorrelate(self.data)
+    accX = StreamDataAnalyzer(data['accX']).getPeriodInfo()['detectedBPM']
+    accY = StreamDataAnalyzer(data['accY']).getPeriodInfo()['detectedBPM']
+    accZ = StreamDataAnalyzer(data['accZ']).getPeriodInfo()['detectedBPM']
+    alpha = StreamDataAnalyzer(data['alpha']).getPeriodInfo()['detectedBPM']
+    beta = StreamDataAnalyzer(data['beta']).getPeriodInfo()['detectedBPM']
+    gamma = StreamDataAnalyzer(data['gamma']).getPeriodInfo()['detectedBPM']
+
+    if (printAll):
+      print(accX, accY, accZ, alpha, beta, gamma)
+      print(np.median([accX, accY, alpha, beta, gamma]))
+
+    #returns the median of all the BPMs, in order to get the most ones.
+    return(np.median([accX, accY, alpha, beta, gamma]))
+
