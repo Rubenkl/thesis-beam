@@ -65,10 +65,11 @@ io.on('connection', function(socket) {
   socket.on('classify', function(data) {
     if (socket.id == machineLearners[machineLearners.length - 1]) { // this is the last added machine learner in the array
       notifyObservers(data, 'classify');
+      console.log("Latest machinelearner classified: " + data);
     } else {
       console.log("Other machinelearner classified: " + data);
     }
-  })
+  });
 
   socket.on('machinelearner', function(data) {
     machineLearners.push(socket.id);
@@ -131,7 +132,7 @@ io.on('connection', function(socket) {
 // Overflow prevention, must be removed later.
 function checkDataOverFlow() {
   if (sensorData.length > DATA_LIMIT) {
-    console.log("FLUSHING DATA, SENSOR ARRAY FULL")
+    console.log("FLUSHING DATA, SENSOR ARRAY FULL");
     sensorData = []; //maybe use sensorData.shift() to just leave out the first one (quite memory intensive)
   }
 }
