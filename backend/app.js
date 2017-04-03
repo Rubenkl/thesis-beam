@@ -62,6 +62,14 @@ io.on('connection', function(socket) {
 
   });
 
+  socket.on('classify', function(data) {
+    if (socket.id == machineLearners[machineLearners.length - 1]) { // this is the last added machine learner in the array
+      notifyObservers(data, 'classify');
+    } else {
+      console.log("Other machinelearner classified: " + data);
+    }
+  })
+
   socket.on('machinelearner', function(data) {
     machineLearners.push(socket.id);
     console.log('machinelearner added: ' + socket.id);
@@ -103,12 +111,17 @@ io.on('connection', function(socket) {
       }
     }
 
-  }
+  } 
 
-  function notifyObservers(data) {
+// type='data' is only supported in Node V6.0 >= !!
+  function notifyObservers(data, type='data') {
     if (observers.length > 0) {
       for (var i = 0; i < observers.length; i++) {
-        io.to(observers[i]).emit('sensorData', data);
+        if (type == 'data') {
+          io.to(observers[i]).emit('sensorData', data);
+        } else if (type == 'classify') {
+          io.to(observers[i]).emit('classify', data);
+        }
       }
     }
   }
@@ -118,6 +131,7 @@ io.on('connection', function(socket) {
 // Overflow prevention, must be removed later.
 function checkDataOverFlow() {
   if (sensorData.length > DATA_LIMIT) {
+    console.log("FLUSHING DATA, SENSOR ARRAY FULL")
     sensorData = []; //maybe use sensorData.shift() to just leave out the first one (quite memory intensive)
   }
 }
