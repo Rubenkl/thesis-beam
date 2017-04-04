@@ -71,6 +71,7 @@ function writeData(streamType, data) {
 // ------- CLASSIFY -------
 
 function classifyData(data) {
+
   if (data.recorderID == cRecorderID && data.sessionCount == cSessionCount && (Date.now() - cFirstTime) < CLASSIFY_TIME) {
     writeData(cStream, data.time + ',' + data.alpha + ',' + data.beta + ',' + data.gamma +','+data.accX + ',' + data.accY + ',' + data.accZ + ',' + "NULL" + '\n');
   } else {
@@ -86,6 +87,8 @@ function classifyData(data) {
     var firstLine = 'timestamp,alpha,beta,gamma,accX,accY,accZ,movement\n';
     cStream = fs.createWriteStream(cPath);
     cStream.write(firstLine);
+
+    console.log("[CLASSIFY] New datafile created.")
   }
 }
 
