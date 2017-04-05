@@ -106,7 +106,7 @@ class DataAnalyzer(object):
     '''
     #no init
 
-  def DTWSimilarity(self, dataX, dataY):
+  def DTWSimilarity(self, dataX, dataY, gyroscope=False):
     '''
     Provide the loaded dataFiles, then this function will extract the accX, accY & accZ for you. Possible extension will be to calculate the alpha, beta and gamma aswell, but disabled due to speed
     Arguments:
@@ -119,13 +119,20 @@ class DataAnalyzer(object):
     X, path = fastdtw(dataX['accX'], dataY['accX'])
     Y, path = fastdtw(dataX['accY'], dataY['accY'])
     Z, path = fastdtw(dataX['accZ'], dataY['accZ'])
+    if (gyroscope):
+        alpha, path = fastdtw(dataX['alpha'], dataY['alpha'])
+        beta, path = fastdtw(dataX['beta'], dataY['beta'])
+        gamma, path = fastdtw(dataX['gamma'], dataY['gamma'])
 
     '''
     Calculate similarity function as written in paper:
     ([11] Akl, A., Feng, C., & Valaee, S. (2011). A novel accelerometer-based gesture recognition system. IEEE Transactions on Signal Processing, 59(12), 6197-6205.
     ISO 690)
     '''
-    return -1 * ((X**2) + (Y**2) + (Z**2))
+    if (gyroscope):
+        return -1 * ((X**2) + (Y**2) + (Z**2) + (alpha**2) + (beta**2) + (gamma**2))
+    else:
+        return -1 * ((X**2) + (Y**2) + (Z**2))
     
   def normalize(self, dataObject):
     '''
@@ -203,7 +210,7 @@ class AutoAnalyzer(object):
     data = self.data.copy()
     analyzer = DataAnalyzer()
     if (autocorrelated):
-      data = analyzer.autoCorrelate(self.data)
+      data = analyzer.autoCorrelate(data)
     accX = StreamDataAnalyzer(data['accX']).getPeriodInfo()['detectedBPM']
     accY = StreamDataAnalyzer(data['accY']).getPeriodInfo()['detectedBPM']
     accZ = StreamDataAnalyzer(data['accZ']).getPeriodInfo()['detectedBPM']

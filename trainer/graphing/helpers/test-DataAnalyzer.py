@@ -24,8 +24,21 @@ dataGamma = dataFile['gamma'].values
 analyzer = DataAnalyzer.AutoAnalyzer(dataFile)
 visualizer = Visualizer.Visualizer(dataFile)
 
+anal = DataAnalyzer.DataAnalyzer()
 
-print(analyzer.getBPM(autocorrelated=True))
+print("Similar: " + str(anal.DTWSimilarity(dataFile, dataFile2, gyroscope=False)))
+print("Similar: " + str(anal.DTWSimilarity(dataFile, dataFile2, gyroscope=True)))
+print("Different: " + str(anal.DTWSimilarity(dataFile2, dataFile3, gyroscope=False)))
+print("Different: " + str(anal.DTWSimilarity(dataFile2, dataFile3, gyroscope=True)))
+
+
+
+'''
+print(analyzer.getBPM(autocorrelated=True, printAll=True))
+print(analyzer.getBPM(autocorrelated=False, printAll=True))
+'''
+
+
 
 '''
 dataRaw = []
