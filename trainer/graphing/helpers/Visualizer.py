@@ -55,7 +55,7 @@ class Visualizer(object):
     plt.show()
 
 
-  def visualizeStream(self, dataStream, correlated=False, title='Data'):
+  def visualizeStream(self, dataStream, correlated=False, title='Data', vLine = None):
     '''Visualizes a particular datastream
       Arguments
         data: single datastream
@@ -69,6 +69,9 @@ class Visualizer(object):
     if correlated:
       analyzer = DataAnalyzer.DataAnalyzer(dataStream)
       ax1.plot(time, analyzer.getAutocorrelation())
+
+    if (vLine):
+      plt.axvline(vLine)
     plt.show()
 
   def visualizeFFT(self, fft, positive_freqs, title = 'FFT', Fs = 1000/50):

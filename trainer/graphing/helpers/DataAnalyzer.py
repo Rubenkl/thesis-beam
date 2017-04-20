@@ -1,12 +1,15 @@
 import numpy as np
 from scipy import fftpack
+from scipy import signal
 from fastdtw import fastdtw
 from sklearn.preprocessing import normalize as skNorm
 import scipy.stats as stats
+from detect_peaks import detect_peaks #peak detection module from: https://github.com/demotu/BMC/blob/master/functions/detect_peaks.py (Marcos Duarte)
 
 
 
-  
+
+
 class StreamDataAnalyzer(object):
   '''Analyzes data: FFT, Autocorrelation, BPM & Freq detection'''
   def __init__(self, data, samplingRate = 1000/50):
@@ -95,7 +98,6 @@ class StreamDataAnalyzer(object):
     BPM = positive_freqs[peakIndex] * 60
 
     return {'fft': X, 'positive_freqs': positive_freqs, 'magnitudes': magnitudes, 'detectedFreq': detectedFreq, 'detectedBPM': BPM }
-
 
 
 
@@ -206,22 +208,105 @@ class AutoAnalyzer(object):
   def __init__(self, dataObject):
     self.data = dataObject
 
-  def getBPM(self, autocorrelated = False, printAll = False):
+  def getBPM(self, autocorrelated = True, printAll = False):
     data = self.data.copy()
     analyzer = DataAnalyzer()
     if (autocorrelated):
       data = analyzer.autoCorrelate(data)
-    accX = StreamDataAnalyzer(data['accX']).getPeriodInfo()['detectedBPM']
-    accY = StreamDataAnalyzer(data['accY']).getPeriodInfo()['detectedBPM']
-    accZ = StreamDataAnalyzer(data['accZ']).getPeriodInfo()['detectedBPM']
-    alpha = StreamDataAnalyzer(data['alpha']).getPeriodInfo()['detectedBPM']
-    beta = StreamDataAnalyzer(data['beta']).getPeriodInfo()['detectedBPM']
-    gamma = StreamDataAnalyzer(data['gamma']).getPeriodInfo()['detectedBPM']
+
+    detectedBPMs = []
+    streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
+    for stream in streams:
+        detectedBPMs.append((stream, StreamDataAnalyzer(data[stream]).getPeriodInfo()['detectedBPM']))
+
+    data = [y for x,y in detectedBPMs] # only the peaks (not streams)
+    bpmIndex = np.argsort(data)[len(data)//2]
+    #FINISH THIS!!
 
     if (printAll):
-      print(accX, accY, accZ, alpha, beta, gamma)
-      print(np.median([accX, accY, alpha, beta, gamma]))
+      print(data)
+      print(np.median(data))
+
 
     #returns the median of all the BPMs, in order to get the most ones.
-    return(np.median([accX, accY, alpha, beta, gamma]))
+    self.BPM = np.median(data)
+    self.preferredStreamFromBPM = streams[bpmIndex]
+    return(self.BPM, streams[bpmIndex])
+  
+  def getLastPeakTime(self, visualize=False):
+    samplingRate = 1000/50
+
+    if not hasattr(self, 'BPM'):
+        self.getBPM(autocorrelated=True)
+    length = int(samplingRate / (self.BPM/60))
+    startIndex = length * 2  # <-- Start extracting the peak from the 2nd period
+    rates = np.array([70,80,90,100,110,130,140])/60 #BPMs to test
+
+    possiblePeaks = []
+    streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
+    for stream in streams:
+        piece = self.data[stream][startIndex: startIndex+length * 2] # get only 1 period, meaning 2 hertz cycles [2pi].
+        # old peak function:
+        #peak = signal.find_peaks_cwt(piece, samplingRate/rates/2)
+        peak = detect_peaks(piece)
+        if len(peak) > 0:
+            possiblePeaks.append((stream, startIndex + peak[0]))
+            print("peak value: " + str(self.data[stream][startIndex + peak[0]]))
+            print("peak time: " + str(startIndex + peak[0]))
+
+
+    data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME)
+    peakIndex = np.argsort(data)[len(data)//2]
+
+    print(peakIndex)
+    print("Peak timepoint:", possiblePeaks[peakIndex][1])
+    print("Peak timepoint (minus start):", possiblePeaks[peakIndex][1] - startIndex)
+
+    print("length: ", (startIndex+length*2 - startIndex))
+
+    if (visualize):
+        import Visualizer
+        visualizer = Visualizer.Visualizer(self.data)
+
+        peakStream = possiblePeaks[peakIndex][0]
+        peakTime = possiblePeaks[peakIndex][1]
+
+        print("stream: ", possiblePeaks[peakIndex][0])
+        visualizer.visualizeStream(self.data[peakStream][startIndex : startIndex+length*2], vLine=(peakTime-startIndex))
+
+        '''
+        vLine means a vertical line on the axis. Vertical line should be placed on the detected peak. Because the startIndex is already inside the possiblePeaks,
+        you have to deduct it to get the right placement
+        '''
+
+    return (self.data['timestamp'][peakTime], peakTime)
+    
+
+
+
+    #print("1 below Peak: " + str(self.data['accX'][startIndex + peak[0] - 1]))
+
+
+
+
+
+
+  def getPeriods(self, amount, startIndex = 0):
+    '''Returns the specified data of an amount of periods regarding to the calculated dominating FFT frequency
+      Arguments:
+        amount: how many periods should be returned
+        startIndex: period number that is being started from. (should probably be a fixed number)
+      Returns:
+        time: x-values for graphing
+        data: data points (y-values)
+    '''
+
+    dataPointsLength = int(self.samplingRate / self.detectedFreq)
+    startIndex = dataPointsLength * startIndex
+
+    time = np.linspace(0,(1/self.detectedFreq) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
+    dataPoints = self.data[startIndex: startIndex + dataPointsLength * amount] # same
+
+    return {'time': time, 'data': dataPoints}
+
 

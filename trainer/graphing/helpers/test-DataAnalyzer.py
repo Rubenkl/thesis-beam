@@ -6,6 +6,13 @@ import numpy as np
 import itertools
 import scipy.stats as stats
 from sklearn.preprocessing import normalize as skNorm
+from scipy import signal
+
+from detect_peaks import detect_peaks
+
+samplingRate = 1000/50
+
+
 
 
 
@@ -21,15 +28,39 @@ dataAlpha = dataFile['alpha'].values
 dataBeta = dataFile['beta'].values
 dataGamma = dataFile['gamma'].values
 
-analyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-visualizer = Visualizer.Visualizer(dataFile)
+analyzer = DataAnalyzer.AutoAnalyzer(dataFile2)
+visualizer = Visualizer.Visualizer(dataFile2)
 
-anal = DataAnalyzer.DataAnalyzer()
 
-print("Similar: " + str(anal.DTWSimilarity(dataFile, dataFile2, gyroscope=False)))
-print("Similar: " + str(anal.DTWSimilarity(dataFile, dataFile2, gyroscope=True)))
-print("Different: " + str(anal.DTWSimilarity(dataFile2, dataFile3, gyroscope=False)))
-print("Different: " + str(anal.DTWSimilarity(dataFile2, dataFile3, gyroscope=True)))
+bpm = analyzer.getBPM()
+
+length = int(samplingRate / (bpm[0]/60))
+startIndex = length * 2  # <-- Start extracting the peak from the 2nd period
+rates = np.array([70,80,90,100,110,120,130,140])/60 #BPMs to test
+
+piece = dataFile['accZ'][startIndex: startIndex+length*2]
+
+
+
+peak = signal.find_peaks_cwt(piece, samplingRate/rates/2)
+print(peak)
+
+#visualizer.visualizeStream(piece, vLine=peak[0])
+#continue next time with this
+
+detect_peaks(piece, show=True)
+
+
+''''
+streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
+for stream in streams:
+  print(dataFile[stream][1:4])
+
+'''
+time, index = analyzer.getLastPeakTime(visualize=True)
+
+
+
 
 
 
