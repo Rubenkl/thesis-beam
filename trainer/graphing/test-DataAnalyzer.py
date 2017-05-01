@@ -1,7 +1,7 @@
-from helpers import DataAnalyzer
+import helpers
+from helpers import DataAnalyzer, Visualizer
 import pandas as pd
 import matplotlib.pyplot as plt
-import Visualizer
 import numpy as np
 import itertools
 import scipy.stats as stats
@@ -10,10 +10,10 @@ from scipy import signal
 
 samplingRate = 1000/50
 
-dataFile = pd.read_csv("../../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
-dataFile2 = pd.read_csv("../../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
-dataFile3 = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
-dataFile4 = pd.read_csv("../../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
+dataFile = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
+dataFile2 = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
+dataFile3 = pd.read_csv("../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
+dataFile4 = pd.read_csv("../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
 
 
 dataAlpha = dataFile['alpha'].values

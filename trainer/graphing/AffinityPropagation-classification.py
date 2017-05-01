@@ -10,8 +10,7 @@ import os #filesystem reads
 
 #for supervised hmm shit
 
-from helpers import DataAnalyzer
-from helpers import FolderWatch
+from helpers import DataAnalyzer, FolderWatch
 
 DATA_FOLDER = "../data/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
@@ -157,17 +156,28 @@ def classify(classiFile):
     #print("classifying: " + previousFile)
 
     dataFile = pd.read_csv(previousFile, header=0)
-    dataFile = analyzer.normalize(dataFile)
-    dataFile = analyzer.autoCorrelate(dataFile)
+    print('state1')
 
-    autoanalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-    detectedBPM = autoanalyzer.getBPM(autocorrelated=True)
+    try:
+      print("trying...")
+      dataFile = analyzer.normalize(dataFile)
+      #dataFile = analyzer.autoCorrelate(dataFile)
+      #is already being autocorrelated by getBPM
+      autoanalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
+      output = autoanalyzer.getLastPeakTime()
+      detectedBPM = output['bpm']
+      time = output['time']
 
-    row = []
-    for secondData in training_data:
-      row.append(analyzer.DTWSimilarity(dataFile, secondData))
 
-    print("Classify: \t", str(model.predict([row])), ", BPM: ", str(detectedBPM))
+
+      row = []
+      for secondData in training_data:
+        row.append(analyzer.DTWSimilarity(dataFile, secondData))
+
+      print("Classify: \t", str(model.predict([row])), ", BPM: ", str(detectedBPM), ", time: ", str(time))
+    except:
+      print('raising exception')
+      pass
 
     os.remove(previousFile)
     previousFile = classiFile
