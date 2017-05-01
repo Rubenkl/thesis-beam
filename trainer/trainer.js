@@ -88,7 +88,7 @@ function classifyData(data) {
     cStream = fs.createWriteStream(cPath);
     cStream.write(firstLine);
 
-    console.log("[CLASSIFY] New datafile created.")
+    console.log("[CLASSIFY] New datafile created - " + cSessionCount);
   }
 }
 
