@@ -105,6 +105,8 @@ for trainingFile in files:
   elif "rotateclock" in trainingFile:
     test_labels.append("rotateclockwise")
 
+  autoanalyzer = DataAnalyzer.AutoAnalyzer(dataObject)
+  print("BPM: " + str(autoanalyzer.getBPM(autocorrelated=True)))
 
 
 print("label size:", len(test_data))
