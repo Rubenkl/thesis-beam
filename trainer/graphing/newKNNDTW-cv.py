@@ -9,11 +9,6 @@ from helpers import DataAnalyzer
 
 #Crossvalidation:
 from sklearn.model_selection import train_test_split
-#multiprocessing
-import multiprocessing
-
-from functools import partial
-
 
 #--------------------------------------------------------
 
@@ -28,13 +23,6 @@ TEST_SIZE_PERCENT = 0.2
 
 # Helper functions:
 
-#extra arguments for the multiprocessing:
-class WithExtraArgs(object):
-  def __init__(self, func, *args):
-    self.func = func
-    self.args = args
-  def __call__(self, idx):
-    self.func(idx, *self.args)
 
 # get all the data files from the directory
 def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
@@ -45,12 +33,45 @@ def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
       output.append(file)
   return output
 
-#------ algorithm ----------
+
+
+# ------------------- MAIN ------------------------------------
+
 analyzer = DataAnalyzer.DataAnalyzer()
 
-def alg(idx, data_data, data_labels):
+print("Doing " + str(ITERATIONS) + " iterations with a " + str(TEST_SIZE_PERCENT) + " test ratio")
+
+# -- training --
+
+data_data = []
+data_labels = []
+data_data_length = []
+
+files = getDataFileNames("training")
+for trainingFile in files:
+  dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
+  #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  dataFile = analyzer.normalize(dataFile)
+  dataFile = analyzer.autoCorrelate(dataFile)
+  
+  data_data.append(dataFile)
+  if "updown" in trainingFile:
+    data_labels.append("updown")
+  elif "leftright" in trainingFile:
+    data_labels.append("leftright")
+  elif "rotateclock" in trainingFile:
+    data_labels.append("rotateclockwise")
+
+print("label size:", len(data_data))
+print("data size:", len(data_labels))
+print("---------")
+
+#all data files loaded, now separate as training & test:
 
 
+#start the loop:
+correct = []
+for _ in range(ITERATIONS):
 
   training_data, test_data, training_labels, test_labels = train_test_split(data_data, data_labels, test_size=TEST_SIZE_PERCENT)
 
@@ -99,11 +120,8 @@ def alg(idx, data_data, data_labels):
         test_error.append(test_labels[index])
         print("wrong prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
 
+  correct.append((len(test_data)-len(test_error))/len(test_data))
   print((len(test_data)-len(test_error))/len(test_data))
-  #glob_correct.append((len(test_data)-len(test_error))/len(test_data))
-#CONTINUE WORKING HERE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GLOB_CORRECT STILL UNDEFINED
-
-  return (len(test_data)-len(test_error))/len(test_data)
 
   '''
 
@@ -120,56 +138,5 @@ def alg(idx, data_data, data_labels):
     print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict(test_matrix)))
 
   '''
-
-
-
-
-
-#start the loop:
-
-
-
-
-# ------------------- MAIN ------------------------------------
-
-if __name__ ==  '__main__':
-
-  print("Doing " + str(ITERATIONS) + " iterations with a " + str(TEST_SIZE_PERCENT) + " test ratio")
-
-  # -- training --
-
-  data_data = []
-  data_labels = []
-  data_data_length = []
-
-  files = getDataFileNames("training")
-  for trainingFile in files:
-    dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
-    #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-    dataFile = analyzer.normalize(dataFile)
-    dataFile = analyzer.autoCorrelate(dataFile)
-    
-    data_data.append(dataFile)
-    if "updown" in trainingFile:
-      data_labels.append("updown")
-    elif "leftright" in trainingFile:
-      data_labels.append("leftright")
-    elif "rotateclock" in trainingFile:
-      data_labels.append("rotateclockwise")
-
-  print("label size:", len(data_data))
-  print("data size:", len(data_labels))
-  print("---------")
-
-
-  manager = multiprocessing.Manager()
-  glob_correct = manager.list([])
-
-  pool = multiprocessing.Pool()
-  correct = pool.map(WithExtraArgs(alg, data_data, data_labels), range(5))
-
-
-  print(correct)
-  print("Mean: " + str(np.mean(glob_correct)))
-
-#all data files loaded, now separate as training & test:
+print(correct)
+print("Mean: " + str(np.mean(correct)))

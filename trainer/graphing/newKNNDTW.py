@@ -10,7 +10,7 @@ import os #filesystem reads
 
 #for supervised hmm shit
 
-from helpers import DataAnalyzer, FolderWatch
+from helpers import DataAnalyzer
 
 DATA_FOLDER = "../data/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
@@ -35,7 +35,6 @@ def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
 analyzer = DataAnalyzer.DataAnalyzer()
 
 # -- training --
-print("[TRAINING]")
 
 training_data = []
 training_labels = []
@@ -84,7 +83,6 @@ model.fit(training_matrix, training_labels)
 
 
 #----- testing -------
-print("[TESTING]")
 
 test_data = []
 test_labels = []
@@ -117,10 +115,10 @@ print("data size:", len(test_labels))
 
 for index, data in enumerate(test_data):
     row = []
-    for secondData in training_data:
+    for secondData in training_data: #calculate the 'matrix' of the test data against all the elements inside the training data:
       row.append(analyzer.DTWSimilarity(data, secondData))
 
-    
+    print(row)
     print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
 
 
@@ -139,53 +137,3 @@ for index, t in enumerate(test_data):
   print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict(test_matrix)))
 
 '''
-
-# -- Classification --
-print("[ONLINE CLASSIFICATION]")
-
-global previousFile
-previousFile = "none"
-
-def classify(classiFile):
-  global previousFile
-  if (previousFile == "none"):
-    previousFile = classiFile
-    FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-  else:
-    
-    #print("classifying: " + previousFile)
-
-    dataFile = pd.read_csv(previousFile, header=0)
-    print('state1')
-
-    try:
-      print("trying...")
-      dataFile = analyzer.normalize(dataFile)
-      #dataFile = analyzer.autoCorrelate(dataFile)
-      #is already being autocorrelated by getBPM
-      autoanalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-      output = autoanalyzer.getLastPeakTime()
-      detectedBPM = output['bpm']
-      time = output['time']
-
-
-
-      row = []
-      for secondData in training_data:
-        row.append(analyzer.DTWSimilarity(dataFile, secondData))
-
-      print("Classify: \t", str(model.predict([row])), ", BPM: ", str(detectedBPM), ", time: ", str(time))
-    except:
-      print('raising exception')
-      pass
-
-    os.remove(previousFile)
-    previousFile = classiFile
-    FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-
-
-# CONTINUE WITH THE TESTINT SHIT ITSELF HERE!!
-
-
-FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
-
