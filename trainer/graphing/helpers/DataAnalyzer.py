@@ -32,25 +32,16 @@ class StreamDataAnalyzer(object):
     self.BPM = self.positive_freqs[self.peakIndex] * 60
 
 
-  '''
-  # old code:
-  def estimated_autocorrelation(self, x):
-    n = len(x)
-    variance = x.var()
-    x = x-x.mean()
-    r = np.correlate(x, x, mode = 'full')[-n:]
-    #assert N.allclose(r, N.array([(x[:n-k]*x[-(n-k):]).sum() for k in range(n)]))
-    result = r/(variance*(np.arange(n, 0, -1)))
-    return result
-  '''
 
+    
   def getAutocorrelation(self):
-    '''Returns the auttocorrelation data of the stream'''
+    '''Returns the auttocorrelation data of the stream
+    Copyright: http://stackoverflow.com/questions/14297012/estimate-autocorrelation-using-python
+    '''
     n = len(self.data)
     variance = self.data.var()
     x = self.data-self.data.mean()
     r = np.correlate(x, x, mode = 'full')[-n:]
-    #assert N.allclose(r, N.array([(x[:n-k]*x[-(n-k):]).sum() for k in range(n)]))
     result = r/(variance*(np.arange(n, 0, -1))) 
     return result
 
@@ -129,7 +120,7 @@ class DataAnalyzer(object):
 
     '''
     Calculate similarity function as written in paper:
-    ([11] Akl, A., Feng, C., & Valaee, S. (2011). A novel accelerometer-based gesture recognition system. IEEE Transactions on Signal Processing, 59(12), 6197-6205.
+    (Akl, A., Feng, C., & Valaee, S. (2011). A novel accelerometer-based gesture recognition system. IEEE Transactions on Signal Processing, 59(12), 6197-6205.
     ISO 690)
     '''
     if (gyroscope):
@@ -146,7 +137,6 @@ class DataAnalyzer(object):
       data: data object to be normalized (will return a deep copy)
     '''
     data = dataObject.copy() #make sure to create a copy, otherwise the same object will just be altered!!
-    
 
     # COMBINED NORMALIZATION FOR ALPHA/BETA/GAMMA:
     dataRaw = []
@@ -177,8 +167,6 @@ class DataAnalyzer(object):
     dataaccY = dataRaw[currIter:currIter + len(dataObject['accY'].values)]
     currIter += len(dataObject['accY'].values)
     dataaccZ = dataRaw[currIter:currIter + len(dataObject['accZ'].values)]
-
-
 
     #set the new calculated values:
     data['accX'] = dataaccX
@@ -264,9 +252,6 @@ class AutoAnalyzer(object):
     data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME)
     peakIndex = np.argsort(data)[len(data)//2]
 
-    #print(peakIndex)
-    #print("Peak timepoint:", possiblePeaks[peakIndex][1])
-    #print("Peak timepoint (minus start):", possiblePeaks[peakIndex][1] - startIndex)
 
     #print("length: ", (startIndex+length*2 - startIndex))
 
