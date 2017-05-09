@@ -24,10 +24,13 @@ analyzer = DataAnalyzer.AutoAnalyzer(dataFile2)
 visualizer = Visualizer.Visualizer(dataFile2)
 
 
-res = analyzer.getLastPeakTime()
+res = analyzer.getPeriods(1, startIndex=1)['data']
 
-print(res['time'])
-print(res['bpm'])
+print(res['accX'])
+
+print(str(res))
+
+
 
 
 

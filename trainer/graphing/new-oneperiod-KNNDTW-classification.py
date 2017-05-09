@@ -162,11 +162,14 @@ def classify(classiFile):
   else:
     
     #print("classifying: " + previousFile)
-
-    dataFile = pd.read_csv(previousFile, header=0)
+    try:
+      dataFile = pd.read_csv(previousFile, header=0)
+    except:
+      print("[EXCEPTION] cant read previous file")
+      pass
 
     try:
-      print("trying...")
+      print("Classificating...")
       dataFile = analyzer.normalize(dataFile)
       dataFile = analyzer.autoCorrelate(dataFile)
       #is already being autocorrelated by getBPM
@@ -175,7 +178,7 @@ def classify(classiFile):
       detectedBPM = output['bpm']
       time = output['time']
 
-      periodData = autoanalyzer.getPeriods(1, startIndex=1)
+      periodData = autoanalyzer.getPeriods(1, startIndex=1)['data']
 
       row = []
       for secondData in training_data:
@@ -183,10 +186,14 @@ def classify(classiFile):
 
       print("Classify: \t", str(model.predict([row])), ", BPM: ", str(detectedBPM), ", time: ", str(time))
     except:
-      print('raising exception')
+      print('[EXCEPTION] during classification')
       pass
 
-    os.remove(previousFile)
+    try:
+      os.remove(previousFile)
+    except:
+      print("[EXCEPTION] cant delete previous file")
+      pass
     previousFile = classiFile
     FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
 

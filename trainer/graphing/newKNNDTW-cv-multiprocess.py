@@ -156,6 +156,8 @@ if __name__ ==  '__main__':
       data_labels.append("leftright")
     elif "rotateclock" in trainingFile:
       data_labels.append("rotateclockwise")
+    elif "rest" in trainingFile:
+      data_labels.append("rest")
 
   print("label size:", len(data_data))
   print("data size:", len(data_labels))
@@ -166,7 +168,7 @@ if __name__ ==  '__main__':
   glob_correct = manager.list([])
 
   pool = multiprocessing.Pool()
-  correct = pool.map(WithExtraArgs(alg, data_data, data_labels), range(5))
+  correct = pool.map(WithExtraArgs(alg, data_data, data_labels), range(ITERATIONS))
 
 
   print(correct)

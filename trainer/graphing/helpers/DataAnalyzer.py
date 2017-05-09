@@ -111,7 +111,7 @@ class DataAnalyzer(object):
 
   def DTWSimilarity(self, dataX, dataY, gyroscope=False):
     '''
-    Provide the loaded dataFiles, then this function will extract the accX, accY & accZ for you. Possible extension will be to calculate the alpha, beta and gamma aswell, but disabled due to speed
+    Provide the loaded dataFiles, then this function will extract the accX, accY & accZ for you. When gyroscope parameter is set to True, it will also calculate the alpha, beta and gamma aswell, but disabled due to speed
     Arguments:
       dataX: First data object
       dataY: Second data object
@@ -140,6 +140,8 @@ class DataAnalyzer(object):
   def normalize(self, dataObject):
     '''
     Normalizes the data using SciKit methods. (sklearn.preprocessing.normalize)
+    Own extension: combined normalization, where the datastreams alpha, beta and gamma are grouped together (accX, accY, accZ responsibly)
+    in order to not normalize each stream individually.
     Arguments:
       data: data object to be normalized (will return a deep copy)
     '''
@@ -208,6 +210,7 @@ class AutoAnalyzer(object):
   '''
   def __init__(self, dataObject):
     self.data = dataObject
+    self.samplingRate = 1000/50
 
   def getBPM(self, autocorrelated = True, printAll = False):
     data = self.data.copy()
@@ -236,12 +239,11 @@ class AutoAnalyzer(object):
   
 
   def getLastPeakTime(self, visualize=False):
-    samplingRate = 1000/50
 
     # Peak time cannot be calculated when there is no BPM yet:
     if not hasattr(self, 'BPM'):
         self.getBPM(autocorrelated=True)
-    length = int(samplingRate / (self.BPM/60))
+    length = int(self.samplingRate / (self.BPM/60))
     startIndex = length * 2  # <-- Start extracting the peak from the 2nd period
     rates = np.array([70,80,90,100,110,130,140])/60 #BPMs to test
 
@@ -268,6 +270,8 @@ class AutoAnalyzer(object):
 
     #print("length: ", (startIndex+length*2 - startIndex))
 
+    # CAN THROW OUT OF BOUNDS ERROR, WHEN CLASSIFYING FILE DOES NOT CONTAIN 2 PERIODS OF DATA
+
     peakStream = possiblePeaks[peakIndex][0]
     peakTimeIndex = possiblePeaks[peakIndex][1]
 
@@ -283,6 +287,7 @@ class AutoAnalyzer(object):
         you have to deduct it to get the right placement
         '''
 
+
     return {'time': self.data['timestamp'][peakTimeIndex], 'bpm': self.BPM, 'index': peakTimeIndex}
     
 
@@ -295,13 +300,13 @@ class AutoAnalyzer(object):
         time: x-values for graphing
         data: data points (y-values)
     '''
-
-    dataPointsLength = int(self.samplingRate / self.detectedFreq)
+    if not hasattr(self, 'BPM'):
+        self.getBPM(autocorrelated=True)
+    dataPointsLength = int(self.samplingRate / (self.BPM/60)) #self/bpm / 60 because you want to get the frequency.
     startIndex = dataPointsLength * startIndex
 
-    time = np.linspace(0,(1/self.detectedFreq) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
+    time = np.linspace(0,(1/(self.BPM/60)) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
     dataPoints = self.data[startIndex: startIndex + dataPointsLength * amount] # same
 
     return {'time': time, 'data': dataPoints}
-
 

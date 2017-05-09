@@ -1,7 +1,7 @@
 var fs = require('fs');
 var socket = require('socket.io-client')('http://thesis-backend.ruub.eu');
 
-var CLASSIFY_TIME = 5000; //5 seconds
+var CLASSIFY_TIME = 3000; //5 seconds
 
 
 var folder = Date.now();

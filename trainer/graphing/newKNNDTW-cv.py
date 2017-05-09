@@ -61,6 +61,8 @@ for trainingFile in files:
     data_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     data_labels.append("rotateclockwise")
+  elif "rest" in trainingFile:
+    data_labels.append("rest")
 
 print("label size:", len(data_data))
 print("data size:", len(data_labels))
