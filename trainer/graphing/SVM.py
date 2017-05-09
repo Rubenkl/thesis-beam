@@ -50,32 +50,36 @@ for trainingFile in files:
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   dataFile = analyzer.normalize(dataFile)
   dataFile = analyzer.autoCorrelate(dataFile)
+
+
   
-  training_data.append(dataFile['accX'][:150])
+  training_data.append([dataFile['accX'][:150], dataFile['accY'][:150]])
   if "updown" in trainingFile:
     training_labels.append("updown")
   elif "leftright" in trainingFile:
     training_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     training_labels.append("rotateclockwise")
+  elif "rest" in trainingFile:
+    training_labels.append("rest")
 
 print("label size:", len(training_data))
 print("data size:", len(training_labels))
 
-print(training_data)
 
-
-#model = svm.SVC()
+model = svm.SVC()
 parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
 
-estimators = [('reduce_dim', PCA()), ('clf', svm.SVC())]
+#estimators = [('reduce_dim', PCA()), ('clf', svm.SVC())]
 
-model = GridSearchCV(estimators, parameters )
 
-model.fit(training_data, training_labels)
+clf = GridSearchCV(model, parameters, verbose=True )
+
+clf.fit(training_data, training_labels)
 
 
 #----- testing -------
+
 
 test_data = []
 test_labels = []
@@ -90,13 +94,15 @@ for trainingFile in files:
   dataObject = analyzer.normalize(dataObject)
   dataObject = analyzer.autoCorrelate(dataObject)
 
-  test_data.append(dataObject['accX'][:150])
+  test_data.append([dataObject['accX'][:150], dataObject['accY'][:150]])
   if "updown" in trainingFile:
     test_labels.append("updown")
   elif "leftright" in trainingFile:
     test_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     test_labels.append("rotateclockwise")
+  elif "rest" in trainingFile:
+    test_labels.append("rest")
 
 
 
@@ -105,21 +111,6 @@ print("data size:", len(test_labels))
 
 
 for index, data in enumerate(test_data):
-    print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict([data])))
+    print("SVC prediction for " + str(test_labels[index]) + " = " + str(clf.predict([data])))
 
 
-'''
-
-for index, t in enumerate(test_data):
-
-  test_matrix = []
-
-  for data in t:
-    row = []
-    for secondData in t:
-      row.append(analyzer.DTWSimilarity(data, secondData))
-    test_matrix.append(row)
-
-  print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict(test_matrix)))
-
-'''
