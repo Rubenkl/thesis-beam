@@ -49,7 +49,7 @@ function drawChart() {
 var updateChart = function(count) {
   time++;
   dps.push([time, ax, ay, az]);
-  console.log('x: ' + ax + ' y: '+ ay);
+  //console.log('x: ' + ax + ' y: '+ ay);
   
   if (dps.length > dataLength) {
     dps.shift();
