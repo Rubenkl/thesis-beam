@@ -1,5 +1,5 @@
 import helpers
-from helpers import DataAnalyzer, Visualizer
+from helpers import DataAnalyzer, Visualizer, Socket
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,8 +28,8 @@ res = analyzer.getPeriods(1, startIndex=1)['data']
 
 print(res['accX'])
 
-print(str(res))
-
+socket = Socket.Connection()
+socket.sendClassify("left-right", 120.9, 12387978)
 
 
 

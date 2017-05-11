@@ -16,10 +16,12 @@ class Connection(object):
     print("[SOCKET] Reconnected.")
     self.isConnected = True
 
-  def sendClassify(self, gesture, BPM):
+  def sendClassify(self, gesture, BPM, time):
     ''' Sends out a JSON object of the classified gesture & BPM
     '''
-    self.socket.emit('classify',"{ 'gesture': '" + gesture + "', 'bpm': " + str(BPM) + " }" )
+    self.socket.emit('classify','{ "gesture": "' + gesture + '", "bpm": ' + str(BPM) + ', "time": ' + str(time) + ' }' )
+    print("[SOCKet] emitting:")
+    print("{ 'gesture': '" + gesture + "', 'bpm': " + str(BPM) + ", 'time': " + str(time) + " }")
 
   def __init__(self, type='Classify'):
     '''Creates a socket.io connection to connect with the server

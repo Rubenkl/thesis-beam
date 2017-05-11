@@ -8,9 +8,11 @@ import itertools
 
 import os #filesystem reads
 
+import time #for sleep
+
 #for supervised hmm shit
 
-from helpers import DataAnalyzer, FolderWatch
+from helpers import DataAnalyzer, FolderWatch, Socket
 
 DATA_FOLDER = "../data/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
@@ -33,6 +35,8 @@ def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
 # ------------------- MAIN ------------------------------------
 
 analyzer = DataAnalyzer.DataAnalyzer()
+socket = Socket.Connection()
+
 
 # -- training --
 print("[TRAINING]")
@@ -151,6 +155,7 @@ for index, t in enumerate(test_data):
 # -- Classification --
 print("[ONLINE CLASSIFICATION]")
 
+
 global previousFile
 previousFile = "none"
 
@@ -184,7 +189,19 @@ def classify(classiFile):
       for secondData in training_data:
         row.append(analyzer.DTWSimilarity(periodData, secondData))
 
-      print("Classify: \t", str(model.predict([row])), ", BPM: ", str(detectedBPM), ", time: ", str(time))
+      gesture = model.predict([row])[0]
+
+      #knutseloplossing
+      if detectedBPM > 200:
+        gesture = "rest"
+
+      print("Classify: \t", str(gesture), ", BPM: ", str(detectedBPM), ", time: ", str(time))  
+
+
+      socket.sendClassify(str(gesture), detectedBPM, time)
+      print("tried to send...")
+
+
     except:
       print('[EXCEPTION] during classification')
       pass
