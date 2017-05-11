@@ -67,6 +67,7 @@ io.on('connection', function(socket) {
       notifyObservers(data, 'classify');
       console.log("Latest machinelearner classified: " + data);
     } else {
+      notifyObservers(data, 'classify');
       console.log("Other machinelearner classified: " + data);
     }
   });
