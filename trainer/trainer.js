@@ -19,7 +19,7 @@ socket.on('connect', function (data) {
   });
 
 socket.on('hello', function(data) {
-  console.log("got the hello");
+  console.log("Received hello.");
 });
 
 socket.on('sensorData', function(data) {
@@ -28,8 +28,6 @@ socket.on('sensorData', function(data) {
   } else {
     testtrainData(data);
   }
-  
-
 });
 
 
@@ -54,7 +52,6 @@ function testtrainData(data) {
 
   }
 }
-
 
 
 function initWriteFile(filename) {
@@ -91,21 +88,6 @@ function classifyData(data) {
     console.log("[CLASSIFY] New datafile created - " + cSessionCount);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ----------- CLOSING ----------------
 
