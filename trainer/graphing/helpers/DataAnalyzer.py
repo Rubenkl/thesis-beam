@@ -226,7 +226,7 @@ class AutoAnalyzer(object):
     return(self.BPM, streams[bpmIndex])
   
 
-  def getLastPeakTime(self, visualize=False):
+  def getLastPeakTime(self, visualize=False, periods=1):
 
     # Peak time cannot be calculated when there is no BPM yet:
     if not hasattr(self, 'BPM'):
@@ -235,10 +235,20 @@ class AutoAnalyzer(object):
     startIndex = length * 2  # <-- Start extracting the peak from the 2nd period
     rates = np.array([70,80,90,100,110,130,140])/60 #BPMs to test
 
+
+    # If we take the data from the preferred stream:
+    '''
+    piece = self.data[self.preferredStreamFromBPM][startIndex: startIndex+length*2*periods]
+    peak = detect_peaks(piece)
+    if len(peak) > 0:
+        peakTimeIndex = startIndex + peak[0]
+    '''
+
+    # Get the first peak from the different streams
     possiblePeaks = []
     streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
     for stream in streams:
-        piece = self.data[stream][startIndex: startIndex+length * 2] # get only 1 period, meaning 2 hertz cycles [2pi].
+        piece = self.data[stream][startIndex: startIndex+length * 2 * periods] # get only 1 period, meaning 2 hertz cycles [2pi].
         # old peak function:
         #peak = signal.find_peaks_cwt(piece, samplingRate/rates/2)
         peak = detect_peaks(piece)
@@ -250,7 +260,7 @@ class AutoAnalyzer(object):
 
 
     data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME)
-    peakIndex = np.argsort(data)[len(data)//2]
+    peakIndex = np.argsort(data)[len(data)//2] #gets the median of all the possible peaks, likely to be the middle one?
 
 
     #print("length: ", (startIndex+length*2 - startIndex))
@@ -261,11 +271,15 @@ class AutoAnalyzer(object):
     peakTimeIndex = possiblePeaks[peakIndex][1]
 
     if (visualize):
-        import Visualizer
+        print("Stream: " + str(peakStream))
+        from helpers import Visualizer
         visualizer = Visualizer.Visualizer(self.data)
 
         #print("stream: ", peakStream)
-        visualizer.visualizeStream(self.data[peakStream][startIndex : startIndex+length*2], vLine=(peakTimeIndex-startIndex))
+        #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*2*periods], vLine=(peakTimeIndex-startIndex))
+        #change self.preferredStreamFromBPM to peakStream if you want to visualize the chosen stream from the peak analyzer instead of BPM.
+        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*2*periods], )
+
 
         '''
         vLine means a vertical line on the axis. Vertical line should be placed on the detected peak. Because the startIndex is already inside the possiblePeaks,
