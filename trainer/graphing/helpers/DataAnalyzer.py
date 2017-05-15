@@ -63,7 +63,7 @@ class StreamDataAnalyzer(object):
   def getPeriods(self, amount, startIndex = 0):
     '''Returns the specified data of an amount of periods regarding to the calculated dominating FFT frequency
       Arguments:
-        amount: how many periods should be returned
+        amount: how many periods shouldf be returned
         startIndex: period number that is being started from. (should probably be a fixed number)
       Returns:
         time: x-values for graphing
@@ -71,7 +71,7 @@ class StreamDataAnalyzer(object):
     '''
 
     dataPointsLength = int(self.samplingRate / self.detectedFreq)
-    startIndex = dataPointsLength * startIndex
+    #startIndex = dataPointsLength * startIndex
 
     time = np.linspace(0,(1/self.detectedFreq) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
     dataPoints = self.data[startIndex: startIndex + dataPointsLength * amount] # same
@@ -248,7 +248,7 @@ class AutoAnalyzer(object):
     possiblePeaks = []
     streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
     for stream in streams:
-        piece = self.data[stream][startIndex: startIndex+length * 2 * periods] # get only 1 period, meaning 2 hertz cycles [2pi].
+        piece = self.data[stream][startIndex: startIndex+length * periods] # get only 1 period, meaning 2 hertz cycles [2pi].
         # old peak function:
         #peak = signal.find_peaks_cwt(piece, samplingRate/rates/2)
         peak = detect_peaks(piece)
@@ -276,9 +276,9 @@ class AutoAnalyzer(object):
         visualizer = Visualizer.Visualizer(self.data)
 
         #print("stream: ", peakStream)
-        #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*2*periods], vLine=(peakTimeIndex-startIndex))
+        #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], vLine=(peakTimeIndex-startIndex))
         #change self.preferredStreamFromBPM to peakStream if you want to visualize the chosen stream from the peak analyzer instead of BPM.
-        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*2*periods], )
+        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods] )
 
 
         '''

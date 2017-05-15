@@ -13,13 +13,19 @@ da = DataAnalyzer.DataAnalyzer()
 #dataFile = da.normalize(dataFile)
 #dataFile = da.autoCorrelate(dataFile)
 
-das = DataAnalyzer.StreamDataAnalyzer(dataFile['accX'])
+das = DataAnalyzer.StreamDataAnalyzer(dataFile['accZ']) #<---- PLAY WITH THIS PARAMETER Z, X, Y
 #output = das.getFFTData()
 
 
 daa = DataAnalyzer.AutoAnalyzer(dataFile)
 
-daa.getLastPeakTime(visualize=True, periods=2)
+output = daa.getLastPeakTime(visualize=True, periods=4)
+peakTime = output['index']
+graphData = das.getPeriods(4, startIndex=peakTime)['data']
+
+visualizer = Visualizer.Visualizer(dataFile)
+
+visualizer.visualizeStream(graphData)
 
 
 

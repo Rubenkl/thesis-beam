@@ -15,6 +15,8 @@ class Visualizer(object):
   def visualizeAll(self, correlated = False):
     '''
     Visualizes all datastreams
+    Arguments:
+      correlated: set correlated to True if you want to autocorrelate the data before graphing.
     '''
     time = np.linspace(0,10, self.data.shape[0]) # from 0 to 10 seconds with [amount of datapoints] steps
 
