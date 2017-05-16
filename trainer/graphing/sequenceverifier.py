@@ -24,7 +24,8 @@ bpm, preferredStream = daa.getBPM()
 print("BPM: ", bpm, ", Stream: ", preferredStream)
 
 output = daa.getLastPeakTime(visualize=True, periods=2, startingPeriod=0)
-peakTime = output['index']
-
-graphData = daa.getPeriods(2, startIndexPeriod=2)['data']
+peakIndex = output['index']
+graphData = daa.getPeriodsFromDataIndex(2, peakIndex)['data']
+print("Startindex: ", peakIndex)
+#graphData = daa.getPeriods(2, startIndexPeriod=2)['data']
 v.visualizeSequence(graphData)

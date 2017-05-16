@@ -54,7 +54,13 @@ for trainingFile in files:
   dataFile = analyzer.autoCorrelate(dataFile)
 
   autoAnalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-  periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
+
+  output = autoAnalyzer.getLastPeakTime(periods=2, startingPeriod=1)
+  peakIndex = output['index']
+  periodData = autoAnalyzer.getPeriodsFromDataIndex(1, peakIndex)['data']
+
+  #when no peak is used as start:
+  #periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
   
   training_data.append(periodData)
   if "updown" in trainingFile:
@@ -110,7 +116,13 @@ for trainingFile in files:
   dataObject = analyzer.autoCorrelate(dataObject)
 
   autoAnalyzer = DataAnalyzer.AutoAnalyzer(dataObject)
-  periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
+
+  output = autoAnalyzer.getLastPeakTime(periods=2, startingPeriod=1)
+  peakIndex = output['index']
+  periodData = autoAnalyzer.getPeriodsFromDataIndex(1, peakIndex)['data']
+
+  #when no peak is used as start:
+  #periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
 
   test_data.append(periodData)
   if "updown" in trainingFile:
@@ -119,6 +131,8 @@ for trainingFile in files:
     test_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     test_labels.append("rotateclockwise")
+  elif "rest" in trainingFile:
+    test_labels.append("rest")
 
   autoanalyzer = DataAnalyzer.AutoAnalyzer(dataObject)
   print("BPM: " + str(autoanalyzer.getBPM(autocorrelated=True)))

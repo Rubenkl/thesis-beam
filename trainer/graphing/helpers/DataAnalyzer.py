@@ -302,11 +302,25 @@ class AutoAnalyzer(object):
     '''
     if not hasattr(self, 'BPM'):
         self.getBPM(autocorrelated=True)
-    dataPointsLength = int(self.samplingRate / (self.BPM/60)) #self/bpm / 60 because you want to get the frequency.
-    startIndexPeriod = dataPointsLength * startIndexPeriod
+    if self.BPM < 10:
+        self.BPM = 1
+    dataPointsLength = int(self.samplingRate / (self.BPM/60)) #self.bpm / 60 because you want to get the frequency.
+    startIndexPeriod = dataPointsLength * startIndexPeriod # skip the amount of periods provided by startIndexPeriod
 
     time = np.linspace(0,(1/(self.BPM/60)) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
     dataPoints = self.data[startIndexPeriod: startIndexPeriod + dataPointsLength * amount] # same
 
     return {'time': time, 'data': dataPoints}
 
+  def getPeriodsFromDataIndex(self, amount, index):
+    '''returns specified periods based on the index of the datafile. This index could be a peak of the data,
+    and start extracting a specified amount of periods from there
+    '''
+    if not hasattr(self, 'BPM'):
+        self.getBPM(autocorrelated=True)
+    dataPointsLength = int(self.samplingRate / (self.BPM/60)) #self/bpm / 60 because you want to get the frequency.
+
+    time = np.linspace(0,(1/(self.BPM/60)) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
+    dataPoints = self.data[index: index + dataPointsLength * amount] # same
+
+    return {'time': time, 'data': dataPoints}
