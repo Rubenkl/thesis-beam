@@ -7,12 +7,19 @@ from helpers import DataAnalyzer
 #dataFile = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #normal data
 
-dataFile = pd.read_csv("../data/forvisualize/training-w-WvUVD6yGptP0OmsZAABi-3.csv", header=0)
-dataFile = pd.read_csv("../data/testing-leftright-JUxdyRarf6RVZv0WAABN-7.csv", header=0)
+PERIODS = 5
+STARTING_PERIOD = 5
+DATAFILE = "../data/good-backup-10seconds/training-updown-JUxdyRarf6RVZv0WAABN-5.csv"
+
+SAVE_LOCATION = "../data/trainsequences/"
+
+#------------------------------------ 
+
+dataFile = pd.read_csv(DATAFILE, header=0)
 da = DataAnalyzer.DataAnalyzer()
 
 dataFile = da.normalize(dataFile)
-#dataFile = da.autoCorrelate(dataFile)
+dataFile = da.autoCorrelate(dataFile)
 #FOR REPORT, UNCOMMENT AUTOCORRELATE AND SEE WHAT AUTOCORRELATE DOES!
 
 v = Visualizer.Visualizer(dataFile)
@@ -23,9 +30,13 @@ daa = DataAnalyzer.AutoAnalyzer(dataFile)
 bpm, preferredStream = daa.getBPM()
 print("BPM: ", bpm, ", Stream: ", preferredStream)
 
-output = daa.getLastPeakTime(visualize=True, periods=2, startingPeriod=0)
+output = daa.getLastPeakTime(visualize=True, periods=PERIODS, startingPeriod=STARTING_PERIOD)
 peakIndex = output['index']
-graphData = daa.getPeriodsFromDataIndex(2, peakIndex)['data']
+graphData = daa.getPeriodsFromDataIndex(PERIODS, peakIndex)['data']
 print("Startindex: ", peakIndex)
 #graphData = daa.getPeriods(2, startIndexPeriod=2)['data']
 v.visualizeSequence(graphData)
+
+
+def saveToFile(data):
+  pd.to_csv(SAVE_LOCATION + data + ".csv") #no idea about this yet

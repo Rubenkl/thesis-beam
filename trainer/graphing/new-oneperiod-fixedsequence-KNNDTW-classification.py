@@ -15,7 +15,7 @@ import time #for sleep
 from helpers import DataAnalyzer, FolderWatch, Socket
 
 DATA_FOLDER = "../data/"
-TRAINING_FOLDER = "../data/training/"
+SEQUENCE_FOLDER = "../data/training/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
 
@@ -47,9 +47,9 @@ training_data = []
 training_labels = []
 training_data_length = []
 
-files = getDataFileNames("training")
+files = getDataFileNames("training", dataFolder=SEQUENCE_FOLDER)
 for trainingFile in files:
-  dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
+  dataFile = pd.read_csv(SEQUENCE_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   dataFile = analyzer.normalize(dataFile)
   dataFile = analyzer.autoCorrelate(dataFile)

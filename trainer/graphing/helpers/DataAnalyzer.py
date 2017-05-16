@@ -272,6 +272,7 @@ class AutoAnalyzer(object):
 
     if (visualize):
         print("Stream chosen by peak detection: " + str(peakStream))
+        print("Time index: ",  peakTimeIndex)
         print("Shows the datastream of where the peak should be found, not the stream from the peak until end itself!")
         from helpers import Visualizer
         visualizer = Visualizer.Visualizer(self.data)
@@ -279,7 +280,7 @@ class AutoAnalyzer(object):
         #print("stream: ", peakStream)
         #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], vLine=(peakTimeIndex-startIndex))
         #change self.preferredStreamFromBPM to peakStream if you want to visualize the chosen stream from the peak analyzer instead of BPM.
-        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods] )
+        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], title='Peak Detector Range' )
 
 
         '''

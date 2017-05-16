@@ -25,7 +25,7 @@ dataFile2 = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.
 
 aa = DataAnalyzer.AutoAnalyzer(dataFile)
 data = aa.getPeriods(2, startIndex=1)['data']
-print(data)
+
 
 #dataFile2 = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
 #dataFile3 = pd.read_csv("../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
