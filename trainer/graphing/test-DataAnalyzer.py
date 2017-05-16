@@ -8,28 +8,60 @@ import scipy.stats as stats
 from sklearn.preprocessing import normalize as skNorm
 from scipy import signal
 
+
+from sklearn import svm
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.decomposition import PCA
+from sklearn.model_selection import GridSearchCV
+
+
+
 samplingRate = 1000/50
 
 dataFile = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
-dataFile2 = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
-dataFile3 = pd.read_csv("../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
-dataFile4 = pd.read_csv("../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
+#dataFile2 = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
+#dataFile3 = pd.read_csv("../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
+#dataFile4 = pd.read_csv("../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
+
+totaldata = []
+totallabels = []
 
 
-dataAlpha = dataFile['alpha'].values
-dataBeta = dataFile['beta'].values
-dataGamma = dataFile['gamma'].values
-
-analyzer = DataAnalyzer.AutoAnalyzer(dataFile2)
-visualizer = Visualizer.Visualizer(dataFile2)
 
 
-res = analyzer.getPeriods(1, startIndex=1)['data']
+data = []
+for index,item in enumerate(dataFile['accX'][:5]):
+  data.append([dataFile['accX'][index], dataFile['accY'][index], dataFile['accZ'][index]])
 
-print(res['accX'])
 
-socket = Socket.Connection()
-socket.sendClassify("left-right", 120.9, 12387978)
+#data.append([dataFile['accX'], dataFile['accY'], dataFile['accZ']])
+data = np.array(data)
+pca = PCA(n_components=3, whiten=True)
+transformed_dataset = PCA.fit_transform(pca, data)
+transformed_dataset = transformed_dataset.reshape(-1,1)[0]
+print(transformed_dataset)
+
+totaldata.append(transformed_dataset)
+totallabels.append("updown")
+
+totaldata.append(transformed_dataset)
+totallabels.append("left-right")
+
+
+print(totaldata)
+
+
+
+model = svm.SVC()
+parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
+
+#estimators = [('reduce_dim', PCA()), ('clf', svm.SVC())]
+
+
+clf = GridSearchCV(model, parameters, verbose=True )
+
+model.fit(totaldata, totallabels)
 
 
 

@@ -271,7 +271,7 @@ class AutoAnalyzer(object):
     peakTimeIndex = possiblePeaks[peakIndex][1]
 
     if (visualize):
-        print("Stream: " + str(peakStream))
+        print("Stream chosen by peak detection: " + str(peakStream))
         from helpers import Visualizer
         visualizer = Visualizer.Visualizer(self.data)
 
