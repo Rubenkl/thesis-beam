@@ -53,7 +53,7 @@ for trainingFile in files:
 
 
   
-  training_data.append([dataFile['accX'][:150], dataFile['accY'][:150], dataFile['accZ'][:150]])
+  training_data.append(dataFile['accX'][:150])
   if "updown" in trainingFile:
     training_labels.append("updown")
   elif "leftright" in trainingFile:
@@ -66,10 +66,6 @@ for trainingFile in files:
 print("label size:", len(training_data))
 print("data size:", len(training_labels))
 
-pca = PCA(n_components=1, copy=True, whiten=True)
-pca_training_data = PCA.fit_transform(pca, training_data)
-print(pca.explained_variance_ratio_)
-
 
 
 model = svm.SVC()
@@ -80,7 +76,7 @@ parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
 
 clf = GridSearchCV(model, parameters, verbose=True )
 
-clf.fit(pca_training_data, training_labels)
+clf.fit(training_data, training_labels)
 
 
 #----- testing -------
@@ -99,7 +95,7 @@ for trainingFile in files:
   dataObject = analyzer.normalize(dataObject)
   dataObject = analyzer.autoCorrelate(dataObject)
 
-  test_data.append([dataObject['accX'][:150], dataObject['accY'][:150], dataObject['accZ'][:150]])
+  test_data.append(dataObject['accX'][:150])
   if "updown" in trainingFile:
     test_labels.append("updown")
   elif "leftright" in trainingFile:
@@ -114,12 +110,10 @@ for trainingFile in files:
 print("label size:", len(test_data))
 print("data size:", len(test_labels))
 
-pca = PCA(n_components=1, copy=True, whiten=True)
-pca_test_data = PCA.fit_transform(pca, test_data)
-print(pca.explained_variance_ratio_)
 
 
-for index, data in enumerate(pca_test_data):
+
+for index, data in enumerate(test_data):
     print("SVC prediction for " + str(test_labels[index]) + " = " + str(clf.predict([data])))
 
 
