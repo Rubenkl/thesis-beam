@@ -92,3 +92,26 @@ class Visualizer(object):
     ax.set_ylabel('Frequency Domain (Spectrum) Magnitude')
     ax.set_xlim(0, Fs / 2)
     plt.show()
+
+  def visualizeSequence(self, data, title='Sequence'):
+    '''
+    Visualizes a sequence of data (X, Y and Z stream)
+    '''
+    time = np.linspace(0,data.shape[0],data.shape[0])
+
+    f, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, sharey=True)
+
+    ax1.plot(time, data.accX)
+    ax1.set_title("accX", y=0.65, size='smaller')
+    ax2.plot(time, data.accY)
+    ax2.set_title("accY", y=0.65, size='smaller')
+    ax3.plot(time, data.accZ)
+    ax3.set_title("accZ", y=0.65, size='smaller')
+
+    f.subplots_adjust(hspace=0)
+    plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+
+    plt.suptitle(title)
+    plt.show()
+
+

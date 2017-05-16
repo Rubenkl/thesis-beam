@@ -54,7 +54,7 @@ for trainingFile in files:
   dataFile = analyzer.autoCorrelate(dataFile)
 
   autoAnalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-  periodData = autoAnalyzer.getPeriods(1, startIndex=1)['data']
+  periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
   
   training_data.append(periodData)
   if "updown" in trainingFile:
@@ -110,7 +110,7 @@ for trainingFile in files:
   dataObject = analyzer.autoCorrelate(dataObject)
 
   autoAnalyzer = DataAnalyzer.AutoAnalyzer(dataObject)
-  periodData = autoAnalyzer.getPeriods(1, startIndex=1)['data']
+  periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
 
   test_data.append(periodData)
   if "updown" in trainingFile:
@@ -184,7 +184,7 @@ def classify(classiFile):
       detectedBPM = output['bpm']
       time = output['time']
 
-      periodData = autoanalyzer.getPeriods(1, startIndex=1)['data']
+      periodData = autoanalyzer.getPeriods(1, startIndexPeriod=1)['data']
 
       row = []
       for secondData in training_data:

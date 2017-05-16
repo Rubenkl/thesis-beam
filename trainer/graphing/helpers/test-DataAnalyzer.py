@@ -10,21 +10,19 @@ from scipy import signal
 
 samplingRate = 1000/50
 
-dataFile = pd.read_csv("../../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
-dataFile2 = pd.read_csv("../../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
-dataFile3 = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
-dataFile4 = pd.read_csv("../../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
+dataFile = pd.read_csv("../../data/good-backup-10seconds/testing-leftright-JUxdyRarf6RVZv0WAABN-7.csv", header=0)
+#dataFile2 = pd.read_csv("../../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
 
 
 dataAlpha = dataFile['alpha'].values
 dataBeta = dataFile['beta'].values
 dataGamma = dataFile['gamma'].values
 
-analyzer = DataAnalyzer.AutoAnalyzer(dataFile2)
-visualizer = Visualizer.Visualizer(dataFile2)
+analyzer = DataAnalyzer.AutoAnalyzer(dataFile)
+visualizer = Visualizer.Visualizer(dataFile)
 
 
-res = analyzer.getLastPeakTime()
+res = analyzer.getLastPeakTime(visualize=True)
 
 print(res['time'])
 print(res['bpm'])

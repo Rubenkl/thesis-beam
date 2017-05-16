@@ -20,9 +20,33 @@ from sklearn.model_selection import GridSearchCV
 samplingRate = 1000/50
 
 dataFile = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv", header=0)
+dataFile2 = pd.read_csv("../data/testing-leftright-qsMbpdsd6zQTqlrKAADi-1-72BPM.csv")
+
+
+aa = DataAnalyzer.AutoAnalyzer(dataFile)
+data = aa.getPeriods(2, startIndex=1)['data']
+print(data)
+
 #dataFile2 = pd.read_csv("../data/training-leftright-avkfxrmpauHdDpeaAAAa-3.csv", header=0)
 #dataFile3 = pd.read_csv("../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #dataFile4 = pd.read_csv("../data/training-rotateclockwise-avkfxrmpauHdDpeaAAAa-6.csv", header=0)
+
+
+
+'''
+v = Visualizer.Visualizer(dataFile)
+
+aa = DataAnalyzer.AutoAnalyzer(dataFile)
+out = aa.getLastPeakTime()
+print(out)
+
+
+v.visualizeSequence(dataFile)
+
+'''
+
+
+'''
 
 totaldata = []
 totallabels = []
@@ -63,7 +87,7 @@ clf = GridSearchCV(model, parameters, verbose=True )
 
 model.fit(totaldata, totallabels)
 
-
+'''
 
 
 '''

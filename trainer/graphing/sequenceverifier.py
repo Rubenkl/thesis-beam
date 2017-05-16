@@ -12,10 +12,10 @@ dataFile = pd.read_csv("../data/testing-leftright-JUxdyRarf6RVZv0WAABN-7.csv", h
 da = DataAnalyzer.DataAnalyzer()
 
 dataFile = da.normalize(dataFile)
-dataFile = da.autoCorrelate(dataFile)
+#dataFile = da.autoCorrelate(dataFile)
+#FOR REPORT, UNCOMMENT AUTOCORRELATE AND SEE WHAT AUTOCORRELATE DOES!
 
-#das = DataAnalyzer.StreamDataAnalyzer(dataFile['accZ']) #<---- PLAY WITH THIS PARAMETER Z, X, Y
-#output = das.getFFTData()
+v = Visualizer.Visualizer(dataFile)
 
 
 daa = DataAnalyzer.AutoAnalyzer(dataFile)
@@ -23,7 +23,8 @@ daa = DataAnalyzer.AutoAnalyzer(dataFile)
 bpm, preferredStream = daa.getBPM()
 print("BPM: ", bpm, ", Stream: ", preferredStream)
 
-output = daa.getLastPeakTime(visualize=True, periods=3)
+output = daa.getLastPeakTime(visualize=True, periods=2, startingPeriod=0)
 peakTime = output['index']
 
-#graphData = das.getPeriods(4, startIndex=peakTime)[preferredStream]
+graphData = daa.getPeriods(2, startIndexPeriod=2)['data']
+v.visualizeSequence(graphData)

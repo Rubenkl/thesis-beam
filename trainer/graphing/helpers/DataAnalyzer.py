@@ -226,13 +226,13 @@ class AutoAnalyzer(object):
     return(self.BPM, streams[bpmIndex])
   
 
-  def getLastPeakTime(self, visualize=False, periods=1):
+  def getLastPeakTime(self, visualize=False, periods=1, startingPeriod = 2):
 
     # Peak time cannot be calculated when there is no BPM yet:
     if not hasattr(self, 'BPM'):
         self.getBPM(autocorrelated=True)
     length = int(self.samplingRate / (self.BPM/60))
-    startIndex = length * 2  # <-- Start extracting the peak from the 2nd period
+    startIndex = length * startingPeriod  # <-- Start extracting the peak from the 2nd period
     rates = np.array([70,80,90,100,110,130,140])/60 #BPMs to test
 
 
@@ -272,6 +272,7 @@ class AutoAnalyzer(object):
 
     if (visualize):
         print("Stream chosen by peak detection: " + str(peakStream))
+        print("Shows the datastream of where the peak should be found, not the stream from the peak until end itself!")
         from helpers import Visualizer
         visualizer = Visualizer.Visualizer(self.data)
 
@@ -290,7 +291,7 @@ class AutoAnalyzer(object):
     return {'time': self.data['timestamp'][peakTimeIndex], 'bpm': self.BPM, 'index': peakTimeIndex}
     
 
-  def getPeriods(self, amount, startIndex = 0):
+  def getPeriods(self, amount, startIndexPeriod = 0):
     '''Returns the specified data of an amount of periods regarding to the calculated dominating FFT frequency
       Arguments:
         amount: how many periods should be returned
@@ -302,10 +303,10 @@ class AutoAnalyzer(object):
     if not hasattr(self, 'BPM'):
         self.getBPM(autocorrelated=True)
     dataPointsLength = int(self.samplingRate / (self.BPM/60)) #self/bpm / 60 because you want to get the frequency.
-    startIndex = dataPointsLength * startIndex
+    startIndexPeriod = dataPointsLength * startIndexPeriod
 
     time = np.linspace(0,(1/(self.BPM/60)) * amount, dataPointsLength * amount) # [AMOUNT] times a period (dataPointsLength)
-    dataPoints = self.data[startIndex: startIndex + dataPointsLength * amount] # same
+    dataPoints = self.data[startIndexPeriod: startIndexPeriod + dataPointsLength * amount] # same
 
     return {'time': time, 'data': dataPoints}
 
