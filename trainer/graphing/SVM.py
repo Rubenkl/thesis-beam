@@ -52,12 +52,12 @@ files = getDataFileNames("training")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  #dataFile = analyzer.normalize(dataFile)
+  dataFile = analyzer.normalize(dataFile)
   #dataFile = analyzer.autoCorrelate(dataFile)
 
 
   data = []
-  for index,item in enumerate(dataFile['accX'][:50]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION
+  for index,item in enumerate(dataFile['accX'][:75]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION
     data.append([dataFile['accX'][index], dataFile['accY'][index], dataFile['accZ'][index]])
 
 
@@ -85,14 +85,25 @@ print("data size:", len(training_labels))
 
 
 model = svm.SVC()
-parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
+Cs = np.linspace(1,3,400)
+Cs = np.arange(94,120, 200)
 
-#estimators = [('reduce_dim', PCA()), ('clf', svm.SVC())]
 
+#CONTINUE HERE: hyperparameter optimization, by adding more gamma and Cs
+param_grid = [
+  {'C': Cs, 'kernel': ['linear']},
+  #{'C': Cs, 'gamma': [0.1], 'kernel': ['rbf']},
+  
+ ]
 
-clf = GridSearchCV(model, parameters)
+clf = GridSearchCV(model, param_grid)
 
 clf.fit(training_data, training_labels)
+
+
+
+print("Best parameters: ", clf.best_params_)
+print("Score: ", clf.best_score_)
 
 
 #----- testing -------
@@ -108,12 +119,12 @@ for trainingFile in files:
   dataObject = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  #dataObject = analyzer.normalize(dataObject)
+  dataObject = analyzer.normalize(dataObject)
   #dataObject = analyzer.autoCorrelate(dataObject)
 
 
   data = []
-  for index,item in enumerate(dataObject['accX'][:50]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION, was 150
+  for index,item in enumerate(dataObject['accX'][:75]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION, was 150
     data.append([dataObject['accX'][index], dataObject['accY'][index], dataObject['accZ'][index]])
 
 
