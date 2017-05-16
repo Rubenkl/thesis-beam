@@ -19,6 +19,10 @@ from helpers import DataAnalyzer
 DATA_FOLDER = "../data/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
+#update below if you do not want to use PCA, and which stream to choose from.
+preferredStream = 'accY'
+noPCA = False;
+
 
 # Helper functions:
 
@@ -48,12 +52,24 @@ files = getDataFileNames("training")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  dataFile = analyzer.normalize(dataFile)
-  dataFile = analyzer.autoCorrelate(dataFile)
+  #dataFile = analyzer.normalize(dataFile)
+  #dataFile = analyzer.autoCorrelate(dataFile)
 
 
+  data = []
+  for index,item in enumerate(dataFile['accX'][:50]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION
+    data.append([dataFile['accX'][index], dataFile['accY'][index], dataFile['accZ'][index]])
+
+
+  data = np.array(data)
+  pca = PCA(n_components=3, copy=True, whiten=True)
+  reduced_data = PCA.fit_transform(pca, data)
+  pca_training_data = reduced_data.reshape(-1,1)[0]
+
+  if noPCA:
+    pca_training_data = dataFile[preferredStream][:100]
   
-  training_data.append(dataFile['accX'][:150])
+  training_data.append(pca_training_data)
   if "updown" in trainingFile:
     training_labels.append("updown")
   elif "leftright" in trainingFile:
@@ -74,7 +90,7 @@ parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
 #estimators = [('reduce_dim', PCA()), ('clf', svm.SVC())]
 
 
-clf = GridSearchCV(model, parameters, verbose=True )
+clf = GridSearchCV(model, parameters)
 
 clf.fit(training_data, training_labels)
 
@@ -92,10 +108,24 @@ for trainingFile in files:
   dataObject = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['accX'], dataFile['accY'], dataFile['accZ']]
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  dataObject = analyzer.normalize(dataObject)
-  dataObject = analyzer.autoCorrelate(dataObject)
+  #dataObject = analyzer.normalize(dataObject)
+  #dataObject = analyzer.autoCorrelate(dataObject)
 
-  test_data.append(dataObject['accX'][:150])
+
+  data = []
+  for index,item in enumerate(dataObject['accX'][:50]): #<--- CHANGE THIS TO THE LENGTH OF DATASET, DIFFERENT FOR CLASSIFICATION, was 150
+    data.append([dataObject['accX'][index], dataObject['accY'][index], dataObject['accZ'][index]])
+
+
+  data = np.array(data)
+  pca = PCA(n_components=3, copy=True, whiten=True)
+  reduced_data = PCA.fit_transform(pca, data)
+  pca_test_data = reduced_data.reshape(-1,1)[0]
+
+  if noPCA:
+    pca_test_data = dataObject[preferredStream][:100]
+
+  test_data.append(pca_test_data)
   if "updown" in trainingFile:
     test_labels.append("updown")
   elif "leftright" in trainingFile:
