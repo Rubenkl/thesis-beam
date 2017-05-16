@@ -74,7 +74,8 @@ function startButtonClicked() {
   $('.stopButton').show();
   
   // 10 seconds temporary training:
-  setTimeout(function(){ stopButtonClicked(); }, 10000);
+  //setTimeout(function(){ stopButtonClicked(); }, 10000);
+  // COMMENTED ABOVE, NO NEED TO STOP AT 10 SECONDS ANYMORE
   noSleep.enable();
 
   socket.emit('newRecorder', 'new recorder taking over');
