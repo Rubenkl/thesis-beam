@@ -19,13 +19,26 @@ das = DataAnalyzer.StreamDataAnalyzer(dataFile['accZ']) #<---- PLAY WITH THIS PA
 
 daa = DataAnalyzer.AutoAnalyzer(dataFile)
 
+
+
+
+'''
 output = daa.getLastPeakTime(visualize=True, periods=4)
 peakTime = output['index']
 graphData = das.getPeriods(4, startIndex=peakTime)['data']
+'''
 
 visualizer = Visualizer.Visualizer(dataFile)
+visualizer.visualizeAll(correlated=False)
 
-visualizer.visualizeStream(graphData)
+dataFile2 = da.standardize(dataFile)
+print(dataFile2['accX'][:10])
+
+v2 = Visualizer.Visualizer(dataFile2)
+v2.visualizeAll(correlated=False)
+
+
+#visualizer.visualizeStream(graphData)
 
 
 
