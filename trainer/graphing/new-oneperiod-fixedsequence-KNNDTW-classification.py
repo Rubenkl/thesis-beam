@@ -69,6 +69,8 @@ for trainingFile in files:
     training_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     training_labels.append("rotateclockwise")
+  elif "square" in trainingFile:
+    training_labels.append("square")
   elif "rest" in trainingFile:
     training_labels.append("rest")
 
@@ -130,6 +132,8 @@ for trainingFile in files:
     test_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     test_labels.append("rotateclockwise")
+  elif "square" in trainingFile:
+    tesT_labels.append("square")
   elif "rest" in trainingFile:
     test_labels.append("rest")
 

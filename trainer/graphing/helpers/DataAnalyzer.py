@@ -4,6 +4,7 @@ from scipy import signal
 from fastdtw import fastdtw
 from sklearn.preprocessing import normalize as skNorm
 import scipy.stats as stats
+import math
 
 from helpers.detect_peaks import detect_peaks #peak detection module from: https://github.com/demotu/BMC/blob/master/functions/detect_peaks.py (Marcos Duarte)
 #remove 'helpers.' if you want to import it from the same folder, as it cannot find its own module
@@ -124,9 +125,12 @@ class DataAnalyzer(object):
     ISO 690)
     '''
     if (gyroscope):
-        return -1 * ((X**2) + (Y**2) + (Z**2) + (alpha**2) + (beta**2) + (gamma**2))
+        #return -1 * ((X**2) + (Y**2) + (Z**2) + (alpha**2) + (beta**2) + (gamma**2))
+        return math.sqrt((X**2) + (Y**2) + (Z**2) + (alpha**2) + (beta**2) + (gamma**2))
     else:
-        return -1 * ((X**2) + (Y**2) + (Z**2))
+        #first line looks like euclidian, second line is the paper implementation.
+        #return -1 * ((X**2) + (Y**2) + (Z**2))
+        return math.sqrt((X**2) + (Y**2) + (Z**2))
     
   def normalize(self, dataObject):
     '''
@@ -261,18 +265,17 @@ class AutoAnalyzer(object):
 
     data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME)
     peakIndex = np.argsort(data)[len(data)//2] #gets the median of all the possible peaks, likely to be the middle one?
-
-
-    #print("length: ", (startIndex+length*2 - startIndex))
+    
 
     # CAN THROW OUT OF BOUNDS ERROR, WHEN CLASSIFYING FILE DOES NOT CONTAIN 2 PERIODS OF DATA
 
     peakStream = possiblePeaks[peakIndex][0]
     peakTimeIndex = possiblePeaks[peakIndex][1]
+    endPeriodIndex = peakTimeIndex + length * periods
 
     if (visualize):
         print("Stream chosen by peak detection: " + str(peakStream))
-        print("Time index: ",  peakTimeIndex)
+        print("Peak Time index: ",  peakTimeIndex)
         print("Shows the datastream of where the peak should be found, not the stream from the peak until end itself!")
         from helpers import Visualizer
         visualizer = Visualizer.Visualizer(self.data)
@@ -289,7 +292,7 @@ class AutoAnalyzer(object):
         '''
 
 
-    return {'time': self.data['timestamp'][peakTimeIndex], 'bpm': self.BPM, 'index': peakTimeIndex}
+    return {'time': self.data['timestamp'][peakTimeIndex], 'bpm': self.BPM, 'index': peakTimeIndex, 'endPeriodIndex': endPeriodIndex}
     
 
   def getPeriods(self, amount, startIndexPeriod = 0):

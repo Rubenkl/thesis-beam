@@ -14,7 +14,7 @@ class Visualizer(object):
 
   def visualizeAll(self, correlated = False):
     '''
-    Visualizes all datastreams
+    Visualizes all datastreams. Accelerometer & Gyroscope
     Arguments:
       correlated: set correlated to True if you want to autocorrelate the data before graphing.
     '''
@@ -56,6 +56,38 @@ class Visualizer(object):
 
     plt.show()
 
+  def visualizeAllAcc(self, correlated = False):
+    '''
+    Visualizes all datastreams of the Accelerometer
+    Arguments:
+      correlated: set correlated to True if you want to autocorrelate the data before graphing.
+    '''
+    time = np.linspace(0,self.data.shape[0], self.data.shape[0]) # from 0 to 10 seconds with [amount of datapoints] steps
+
+    f, (ax4, ax5, ax6) = plt.subplots(3, sharex=True, sharey=True)
+
+    ax4.plot(time, self.data.accX)
+    ax4.set_title("accX", y=0.65, size='smaller')
+    ax5.plot(time, self.data.accY)
+    ax5.set_title("accY", y=0.65, size='smaller')
+    ax6.plot(time, self.data.accZ)
+    ax6.set_title("accZ", y=0.65, size='smaller')
+
+    if correlated:
+      analyzer = DataAnalyzer.DataAnalyzer(self.data.accX)
+      ax4.plot(time, analyzer.getAutocorrelation())
+      analyzer = DataAnalyzer.DataAnalyzer(self.data.accY)
+      ax5.plot(time, analyzer.getAutocorrelation())
+      analyzer = DataAnalyzer.DataAnalyzer(self.data.accZ)
+      ax6.plot(time, analyzer.getAutocorrelation())
+
+    # Fine-tune figure; make subplots close to each other and hide x ticks for
+    # all but bottom plot.
+    f.subplots_adjust(hspace=0)
+    plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+
+    plt.show()
+
 
   def visualizeStream(self, dataStream, correlated=False, title='Data', vLine = None):
     '''Visualizes a particular datastream
@@ -64,7 +96,7 @@ class Visualizer(object):
         title: [optional]
     '''
 
-    time = np.linspace(0,10,dataStream.shape[0])
+    time = np.linspace(0,dataStream.shape[0],dataStream.shape[0])
     f, ax1 = plt.subplots(1)
     ax1.plot(time, dataStream)
     ax1.set_title(title)

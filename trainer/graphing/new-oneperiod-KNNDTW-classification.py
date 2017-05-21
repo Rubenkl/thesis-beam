@@ -14,7 +14,7 @@ import time #for sleep
 
 from helpers import DataAnalyzer, FolderWatch, Socket
 
-DATA_FOLDER = "../data/"
+DATA_FOLDER = "../data/good-backup-10seconds/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
 
