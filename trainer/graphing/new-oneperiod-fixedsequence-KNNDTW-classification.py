@@ -197,28 +197,25 @@ def classify(classiFile):
       dataFile = analyzer.autoCorrelate(dataFile)
       #is already being autocorrelated by getBPM
       autoanalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-      output = autoanalyzer.getLastPeakTime()
+      output = autoanalyzer.getLastPeakTime() #calculates where the first occuring peak is in the file
       detectedBPM = output['bpm']
       time = output['time']
+      peakIndex = output['index'] #index number of the peak in the file
 
-      periodData = autoanalyzer.getPeriods(1, startIndexPeriod=1)['data']
+      periodData = autoanalyzer.getPeriodsFromDataIndex(1, peakIndex)['data'] #get one period of data starting from peak index.
 
       row = []
-      for secondData in training_data:
-        row.append(analyzer.DTWSimilarity(periodData, secondData))
+      for secondData in training_data: # calculate the DTW Similarity between the sample and all items in the training dataset.
+        row.append(analyzer.DTWSimilarity(periodData, secondData)) 
 
-      gesture = model.predict([row])[0]
+      gesture = model.predict([row])[0] #predict the gesture with KNN using the calculated distance matrix
 
-      #knutseloplossing
+      # if BPM is larger than 200, you know for sure it isn't a movement. Temporary 'knutseloplossing'
       if detectedBPM > 200:
         gesture = "rest"
 
       print("Classify: \t", str(gesture), ", BPM: ", str(detectedBPM), ", time: ", str(time))  
-
-
-      socket.sendClassify(str(gesture), detectedBPM, time)
-      print("tried to send...")
-
+      socket.sendClassify(str(gesture), detectedBPM, time) #send back the classified gesture through the socket.
 
     except:
       print('[EXCEPTION] during classification')
@@ -233,8 +230,6 @@ def classify(classiFile):
     FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
 
 
-# CONTINUE WITH THE TESTINT SHIT ITSELF HERE!!
-
-
+#sort of while loop; when done classifying, watch the folder again!
 FolderWatch.FolderWatch(CLASSIFY_FOLDER, classify)
 
