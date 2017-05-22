@@ -19,8 +19,11 @@ class StreamDataAnalyzer(object):
     Arguments
       data: a single datastream (ex: datastream of alpha values) 
     '''
+    
+
     self.data = data
     self.samplingRate = samplingRate
+
 
     #calculating FFT already:
     X = fftpack.fft(self.data)
@@ -201,6 +204,10 @@ class AutoAnalyzer(object):
     BPM which it thinks it is the closest by. This is a result of the median of all the calculated BPMs.
   '''
   def __init__(self, dataObject):
+    self.STARTINDEX_WINDOW_PERCENT = 0.3
+    self.ENDINDEX_WINDOW_PERCENT = 0.3
+
+
     self.data = dataObject
     self.samplingRate = 1000/50
 
@@ -248,11 +255,19 @@ class AutoAnalyzer(object):
         peakTimeIndex = startIndex + peak[0]
     '''
 
+    #Define range of peak detection:
+    startIndex = int(startIndex - length * self.STARTINDEX_WINDOW_PERCENT)
+    if startIndex < 0:
+        startIndex = 0;
+    endIndex = int((startIndex + length * periods) + (length * self.ENDINDEX_WINDOW_PERCENT))
+
+
     # Get the first peak from the different streams
     possiblePeaks = []
-    streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
+    #streams = ['accX', 'accY', 'accZ', 'alpha', 'beta', 'gamma']
+    streams = ['accX', 'accY', 'accZ']
     for stream in streams:
-        piece = self.data[stream][startIndex: startIndex+length * periods] # get only 1 period, meaning 2 hertz cycles [2pi].
+        piece = self.data[stream][startIndex: endIndex] # get only 1 period, meaning 2 hertz cycles [2pi].
         # old peak function:
         #peak = signal.find_peaks_cwt(piece, samplingRate/rates/2)
         peak = detect_peaks(piece)
@@ -263,13 +278,15 @@ class AutoAnalyzer(object):
             #print("peak system time: " + str(self.data['timestamp'][startIndex + peak[0]]))
 
 
-    data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME)
+    data = [y for x,y in possiblePeaks] # only the peak times (not streams) (this is not peak VALUE, but peak TIME (index))
     peakIndex = np.argsort(data)[len(data)//2] #gets the median of all the possible peaks, likely to be the middle one?
     
 
     # CAN THROW OUT OF BOUNDS ERROR, WHEN CLASSIFYING FILE DOES NOT CONTAIN 2 PERIODS OF DATA
 
     peakStream = possiblePeaks[peakIndex][0]
+    print("Stream chosen by peak detection: " + str(peakStream))
+
     peakTimeIndex = possiblePeaks[peakIndex][1]
     endPeriodIndex = peakTimeIndex + length * periods
 
@@ -283,8 +300,8 @@ class AutoAnalyzer(object):
         #print("stream: ", peakStream)
         #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], vLine=(peakTimeIndex-startIndex))
         #change self.preferredStreamFromBPM to peakStream if you want to visualize the chosen stream from the peak analyzer instead of BPM.
-        visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], title='Peak Detector Range' )
-
+        #visualizer.visualizeStream(self.data[self.preferredStreamFromBPM][startIndex : startIndex+length*periods], title='Peak Detector Range' )
+        visualizer.visualizeSequence(self.data[startIndex: endIndex], title='Peak Detector Range')
 
         '''
         vLine means a vertical line on the axis. Vertical line should be placed on the detected peak. Because the startIndex is already inside the possiblePeaks,

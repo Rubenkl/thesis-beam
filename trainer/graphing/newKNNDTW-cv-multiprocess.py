@@ -17,11 +17,11 @@ from functools import partial
 
 #--------------------------------------------------------
 
-DATA_FOLDER = "../data/"
+DATA_FOLDER = "../data/trainsequences/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
-ITERATIONS = 30
-TEST_SIZE_PERCENT = 0.2
+ITERATIONS = 20
+TEST_SIZE_PERCENT = 0.6
 
 #--------------------------------------------------------
 
@@ -97,7 +97,7 @@ def alg(idx, data_data, data_labels):
       #print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
       if test_labels[index] != model.predict([row]):
         test_error.append(test_labels[index])
-        print("wrong prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
+        #print("wrong prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
 
   print((len(test_data)-len(test_error))/len(test_data))
   #glob_correct.append((len(test_data)-len(test_error))/len(test_data))
@@ -142,12 +142,14 @@ if __name__ ==  '__main__':
   data_labels = []
   data_data_length = []
 
-  files = getDataFileNames("training")
+  files = getDataFileNames("") #<-- Filter for ex: 'training' for only training data
   for trainingFile in files:
     dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
     #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-    dataFile = analyzer.normalize(dataFile)
-    dataFile = analyzer.autoCorrelate(dataFile)
+    
+    #dataset already normalized, so not necessary anymore
+    #dataFile = analyzer.normalize(dataFile)
+    #dataFile = analyzer.autoCorrelate(dataFile)
     
     data_data.append(dataFile)
     if "updown" in trainingFile:
@@ -156,6 +158,8 @@ if __name__ ==  '__main__':
       data_labels.append("leftright")
     elif "rotateclock" in trainingFile:
       data_labels.append("rotateclockwise")
+    elif "square" in trainingFile:
+      data_labels.append("square")
     elif "rest" in trainingFile:
       data_labels.append("rest")
 

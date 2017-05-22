@@ -7,9 +7,12 @@ from helpers import DataAnalyzer
 #dataFile = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #normal data
 
-PERIODS = 5
-STARTING_PERIOD = 2
-DATAFILE = "../data/training-square-ZirZIvZtcyHkJHlJAAEM-2.csv"
+PERIODS = 4
+STARTING_PERIOD = 10
+WRITE = True
+DATAFILE_NUMBER = 1
+DATAFILE = "../data/good-backup-10seconds/training-rotateclockwise-8654johJQMBPknNOAAE3-1.csv"
+DATAID = "8654johJQMBPknNOAAE3-1"
 
 SAVE_LOCATION = "../data/trainsequences/"
 
@@ -19,7 +22,7 @@ dataFile = pd.read_csv(DATAFILE, header=0)
 da = DataAnalyzer.DataAnalyzer()
 
 dataFile = da.normalize(dataFile)
-#dataFile = da.autoCorrelate(dataFile)
+dataFile = da.autoCorrelate(dataFile)
 #FOR REPORT, UNCOMMENT AUTOCORRELATE AND SEE WHAT AUTOCORRELATE DOES!
 
 #FFT:
@@ -37,15 +40,23 @@ daa = DataAnalyzer.AutoAnalyzer(dataFile)
 bpm, preferredStream = daa.getBPM()
 print("BPM: ", bpm, ", Stream: ", preferredStream)
 
-output = daa.getLastPeakTime(visualize=False, periods=PERIODS, startingPeriod=STARTING_PERIOD)
+output = daa.getLastPeakTime(visualize=True, periods=PERIODS, startingPeriod=STARTING_PERIOD)
 peakIndex = output['index']
 endPeriodIndex = output['endPeriodIndex']
 print("start: ", str(peakIndex), ", end: ", str(endPeriodIndex))
 
 
-
+#temp this for speeding up gathering datasets:
 v = Visualizer.Visualizer(dataFile[peakIndex:endPeriodIndex])
 v.visualizeAllAcc()
+
+
+if WRITE:
+  savePath = SAVE_LOCATION +"/"+ dataFile['movement'][1] + "-" + str(peakIndex) + "-" + str(endPeriodIndex) + "-" + DATAID + "_" + str(DATAFILE_NUMBER) + ".csv"
+  print(savePath)
+  dataFile[peakIndex:endPeriodIndex].to_csv(savePath, sep=',') #no idea about this yet
+
+
 #v.visualizeSequence(dataFile[peakIndex:endPeriodIndex])
 
 '''
@@ -56,4 +67,4 @@ v.visualizeSequence(graphData)
 '''
 
 def saveToFile(data):
-  pd.to_csv(SAVE_LOCATION + data + ".csv") #no idea about this yet
+  data.to_csv(SAVE_LOCATION + data['movement'] + "-" + peakIndex + "-" + endPeriodIndex + "_" + DATAFILE_NUMBER + ".csv") #no idea about this yet
