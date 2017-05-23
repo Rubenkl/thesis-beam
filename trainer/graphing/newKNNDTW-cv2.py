@@ -18,9 +18,10 @@ from sklearn.preprocessing import normalize
 
 DATA_FOLDER = "../data/trainsequences/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
+ADDITIONAL_TRAIN_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/FLAWED/ADDITIONAL-TRAINED/"
 
-ITERATIONS = 5
-TEST_SIZE_PERCENT = 0.3
+ITERATIONS = 10
+TEST_SIZE_PERCENT = 0.30
 
 np.set_printoptions(precision=2)
 
@@ -93,18 +94,43 @@ files = getDataFileNames("")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  dataFile = analyzer.normalize(dataFile)
-  dataFile = analyzer.autoCorrelate(dataFile)
+  #dataFile = analyzer.normalize(dataFile)
+  #dataFile = analyzer.autoCorrelate(dataFile)
   
   data_data.append(dataFile)
   if "updown" in trainingFile:
-    data_labels.append("updown")
+    data_labels.append("0")
   elif "leftright" in trainingFile:
-    data_labels.append("leftright")
+    data_labels.append("1")
   elif "rotateclock" in trainingFile:
-    data_labels.append("rotateclockwise")
+    data_labels.append("2")
   elif "rest" in trainingFile:
-    data_labels.append("rest")
+    data_labels.append("3")
+
+
+#-- Additional training data:
+additional_data = []
+additional_labels = []
+
+files = getDataFileNames("", dataFolder=ADDITIONAL_TRAIN_FOLDER)
+for trainingFile in files:
+  dataFile = pd.read_csv(ADDITIONAL_TRAIN_FOLDER + trainingFile, header = 0)
+  #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
+  #dataFile = analyzer.normalize(dataFile)
+  #dataFile = analyzer.autoCorrelate(dataFile)
+  
+  additional_data.append(dataFile)
+  if "updown" in trainingFile:
+    additional_labels.append("0")
+  elif "leftright" in trainingFile:
+    additional_labels.append("1")
+  elif "rotateclock" in trainingFile:
+    additional_labels.append("2")
+  elif "rest" in trainingFile:
+    additional_labels.append("3")
+
+
+
 
 
 class_names = ['updown', 'leftright', 'rotateclockwise', 'rest']
@@ -118,6 +144,9 @@ print("label size:", len(data_data))
 print("data size:", len(data_labels))
 print("---------")
 
+
+
+
 #all data files loaded, now separate as training & test:
 
 
@@ -128,6 +157,13 @@ for _ in range(ITERATIONS):
   training_data, test_data, training_labels, test_labels = train_test_split(data_data, data_labels, test_size=TEST_SIZE_PERCENT)
 
 
+  #------------------- ADDITIONAL TRAINING FILES ---------------------
+
+
+  for datapoint in additional_data:
+    training_data.append(datapoint)
+  for labelpoint in additional_labels:
+    training_labels.append(labelpoint)
 
 
   #------------ TRAINING -----------------
@@ -191,7 +227,7 @@ np.set_printoptions(precision=2)
 # Plot non-normalized confusion matrix
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=class_names,
-                      title='Confusion matrix, without normalization')
+                      title='Confusion matrix. '+ str(ITERATIONS)+' iterations, test ratio: ' + str(TEST_SIZE_PERCENT))
 
 # Plot normalized confusion matrix
 
@@ -202,7 +238,5 @@ normedMatrix = normalize(cnf_matrix, axis=1, norm='l1')
 normedMatrix = np.around(normedMatrix, decimals=2)
 
 
-plot_confusion_matrix(normedMatrix, classes=class_names,
-                      title='Normalized confusion matrix')
-
+plot_confusion_matrix(normedMatrix, classes=class_names, title='Confusion matrix. '+ str(ITERATIONS)+' iterations, test ratio: ' + str(TEST_SIZE_PERCENT))
 plt.show()

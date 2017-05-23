@@ -11,8 +11,8 @@ PERIODS = 1
 STARTING_PERIOD = 10
 WRITE = True
 DATAFILE_NUMBER = 1
-DATAFILE = "../data/training-rotateclockwise-speedingup-5.csv"
-DATAID = "speedingup-5"
+DATAFILE = "../data/training-rest-sSbsz2YEEckYAABR-1.csv"
+DATAID = "sSbsz2YEEckYAABR-1"
 
 SAVE_LOCATION = "../data/trainsequences/"
 
