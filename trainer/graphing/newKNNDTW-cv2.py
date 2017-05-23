@@ -9,6 +9,10 @@ from helpers import DataAnalyzer
 
 #Crossvalidation:
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import normalize
+
+
 
 #--------------------------------------------------------
 
@@ -17,6 +21,9 @@ CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIF
 
 ITERATIONS = 5
 TEST_SIZE_PERCENT = 0.3
+
+np.set_printoptions(precision=2)
+
 
 #--------------------------------------------------------
 
@@ -34,6 +41,41 @@ def getDataFileNames(dataType, movement = "", dataFolder = DATA_FOLDER):
   return output
 
 
+#copyright: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+
 
 # ------------------- MAIN ------------------------------------
 
@@ -47,7 +89,7 @@ data_data = []
 data_labels = []
 data_data_length = []
 
-files = getDataFileNames("training")
+files = getDataFileNames("")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
@@ -63,6 +105,14 @@ for trainingFile in files:
     data_labels.append("rotateclockwise")
   elif "rest" in trainingFile:
     data_labels.append("rest")
+
+
+class_names = ['updown', 'leftright', 'rotateclockwise', 'rest']
+
+
+test_plot_labels = []
+predict_labels = []
+
 
 print("label size:", len(data_data))
 print("data size:", len(data_labels))
@@ -100,6 +150,7 @@ for _ in range(ITERATIONS):
 
 
 
+
   #----------- TESTING -------------------
 
   #test_data = []
@@ -111,6 +162,7 @@ for _ in range(ITERATIONS):
   #print("test data size:", len(test_data))
   #print("test label size:", len(test_labels))
 
+
   test_error = []
   for index, data in enumerate(test_data):
       row = []
@@ -118,6 +170,8 @@ for _ in range(ITERATIONS):
         row.append(analyzer.DTWSimilarity(data, secondData))
 
       #print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
+      predict_labels.append(model.predict([row]))
+      test_plot_labels.append(test_labels[index])
       if test_labels[index] != model.predict([row]):
         test_error.append(test_labels[index])
         print("wrong prediction for " + str(test_labels[index]) + " = " + str(model.predict([row])))
@@ -125,20 +179,30 @@ for _ in range(ITERATIONS):
   correct.append((len(test_data)-len(test_error))/len(test_data))
   print((len(test_data)-len(test_error))/len(test_data))
 
-  '''
 
-  for index, t in enumerate(test_data):
 
-    test_matrix = []
-
-    for data in t:
-      row = []
-      for secondData in t:
-        row.append(analyzer.DTWSimilarity(data, secondData))
-      test_matrix.append(row)
-
-    print("AffinityProp prediction for " + str(test_labels[index]) + " = " + str(model.predict(test_matrix)))
-
-  '''
 print(correct)
 print("Mean: " + str(np.mean(correct)))
+
+
+cnf_matrix = confusion_matrix(test_plot_labels, predict_labels)
+np.set_printoptions(precision=2)
+
+# Plot non-normalized confusion matrix
+plt.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix, without normalization')
+
+# Plot normalized confusion matrix
+
+
+plt.figure()
+
+normedMatrix = normalize(cnf_matrix, axis=1, norm='l1')
+normedMatrix = np.around(normedMatrix, decimals=2)
+
+
+plot_confusion_matrix(normedMatrix, classes=class_names,
+                      title='Normalized confusion matrix')
+
+plt.show()
