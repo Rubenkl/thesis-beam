@@ -1,0 +1,13 @@
+[ANALYZED]
+training-leftright-pausing--2
+training-leftright-pausing-3
+leftright-slowingdown-15
+leftright-speedingup-23
+updown-pausing-2times-8 [no steady 2 pauses, so skipped]
+updown-pausing-2times-1
+updown-speedingup-6
+updown-slowingdown-4
+rotateclockwise-pausing-16
+rotateclockwise-slowingdown-15
+rotateclockwise-speedingup-5 [stop at 140]
+

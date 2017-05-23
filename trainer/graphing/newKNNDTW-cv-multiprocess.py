@@ -21,7 +21,7 @@ DATA_FOLDER = "../data/trainsequences/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
 ITERATIONS = 20
-TEST_SIZE_PERCENT = 0.6
+TEST_SIZE_PERCENT = 0.4 
 
 #--------------------------------------------------------
 

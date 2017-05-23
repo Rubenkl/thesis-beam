@@ -14,7 +14,7 @@ from sklearn.preprocessing import normalize as skNorm
 #dataFile = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #normal data
 
-dataFile = pd.read_csv("../data/good-backup-10seconds/training-updown-6B7oZlm6dAuDJG5LAABp-3.csv", header=0)
+dataFile = pd.read_csv("../data/training-leftright-pausing-3.csv", header=0)
 da = DataAnalyzer.DataAnalyzer()
 
 
@@ -28,16 +28,17 @@ dataNorm['accZ'] = skNorm(dataNorm['accZ'])[0]
 
 
 
-#dataFile = da.normalize(dataFile)
-dataFileCorrelated = da.autoCorrelate(dataFile)
+dataFile = da.normalize(dataFile)
+dataFile = da.autoCorrelate(dataFile)
 
 
 
 daa = DataAnalyzer.AutoAnalyzer(dataFile)
 
-visualizer = Visualizer.Visualizer(dataFile[10:110])
+visualizer = Visualizer.Visualizer(dataFile)
 #visualizer = Visualizer.Visualizer(dataFile[90:120])
 
+'''
 time = np.linspace(0,dataFile[10:110].shape[0], dataFile[10:110].shape[0])
 fig = plt.figure(figsize=(12,4))
 _ = plt.plot(time, dataFile[10:110]['accZ'], label='Normalized')
@@ -48,6 +49,8 @@ _ = plt.xlabel('Time')
 _ = plt.legend()
 plt.show()
 
+'''
 
-visualizer.visualizeStream(dataFile[10:110]['accX'])
-#visualizer.visualizeAllAcc(correlated=False)
+
+#visualizer.visualizeStream(dataFile[10:110]['accX'])
+visualizer.visualizeAllAcc(correlated=False)
