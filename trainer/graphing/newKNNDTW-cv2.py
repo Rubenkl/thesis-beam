@@ -19,8 +19,9 @@ from sklearn.preprocessing import normalize
 DATA_FOLDER = "../data/trainsequences/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 ADDITIONAL_TRAIN_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/FLAWED/ADDITIONAL-TRAINED/"
+ADDITIONAL_TEST_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/FLAWED/ADDITIONAL-TESTED/"
 
-ITERATIONS = 10
+ITERATIONS = 100
 TEST_SIZE_PERCENT = 0.30
 
 np.set_printoptions(precision=2)

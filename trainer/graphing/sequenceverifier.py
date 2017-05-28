@@ -8,13 +8,13 @@ from helpers import DataAnalyzer
 #normal data
 
 PERIODS = 1
-STARTING_PERIOD = 10
+STARTING_PERIOD = 9
 WRITE = True
 DATAFILE_NUMBER = 1
-DATAFILE = "../data/training-rest-sSbsz2YEEckYAABR-1.csv"
-DATAID = "sSbsz2YEEckYAABR-1"
+DATAFILE = "../data/testing-leftright-5zAmDGVqPIDtA8iSAABq-4notleftright.csv"
+DATAID = "5zAmDGVqPIDtA8iSAABq-4"
 
-SAVE_LOCATION = "../data/trainsequences/"
+SAVE_LOCATION = "../data/"
 
 #------------------------------------ 
 

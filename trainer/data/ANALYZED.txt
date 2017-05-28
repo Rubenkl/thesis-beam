@@ -11,3 +11,4 @@ rotateclockwise-pausing-16
 rotateclockwise-slowingdown-15
 rotateclockwise-speedingup-5 [stop at 140]
 
+updown-speedingup-7 [used to extract multi-period (2) instead of 1 for the flawed dataset]
