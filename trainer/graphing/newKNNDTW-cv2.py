@@ -21,7 +21,7 @@ CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIF
 ADDITIONAL_TRAIN_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/FLAWED/ADDITIONAL-TRAINED/"
 ADDITIONAL_TEST_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/FLAWED/ADDITIONAL-TESTED/"
 
-ITERATIONS = 100
+ITERATIONS = 400
 TEST_SIZE_PERCENT = 0.30
 
 np.set_printoptions(precision=2)
@@ -153,8 +153,8 @@ print("---------")
 
 #start the loop:
 correct = []
-for _ in range(ITERATIONS):
-
+for i in range(ITERATIONS):
+  print("Iteration " + str(i+1) + "/" + str(ITERATIONS))
   training_data, test_data, training_labels, test_labels = train_test_split(data_data, data_labels, test_size=TEST_SIZE_PERCENT)
 
 

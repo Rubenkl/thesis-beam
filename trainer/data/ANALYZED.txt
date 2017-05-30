@@ -12,3 +12,11 @@ rotateclockwise-slowingdown-15
 rotateclockwise-speedingup-5 [stop at 140]
 
 updown-speedingup-7 [used to extract multi-period (2) instead of 1 for the flawed dataset]
+
+rotateclockwise-5zAmDGVqPIDtA8iSAABq-2 [used to extract multi-period (2) instead of 1, and multi-period (1.5)]
+
+testing-updown-R53P95G3cV93UMlKAAB0-2.csv
+testing-updown-R53P95G3cV93UMlKAAB0-3.csv
+testing-rotateclockwise-R53P95G3cV93UMlKAAB0-9.csv (all were correct, no flaws)
+testing-rotateclockwise-R53P95G3cV93UMlKAAB0-8.csv (lot of flaws; caused by a pause after each rotation, and 1 time bumping into an item lol (can clearly see that peak at the X stream))
+testing-rotateclockwise-R53P95G3cV93UMlKAAB0-7.csv (all correct, only last one not)

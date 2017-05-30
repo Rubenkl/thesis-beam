@@ -11,8 +11,8 @@ PERIODS = 1
 STARTING_PERIOD = 9
 WRITE = True
 DATAFILE_NUMBER = 1
-DATAFILE = "../data/testing-leftright-5zAmDGVqPIDtA8iSAABq-4notleftright.csv"
-DATAID = "5zAmDGVqPIDtA8iSAABq-4"
+DATAFILE = "../data/testing-rotateclockwise-R53P95G3cV93UMlKAAB0-7.csv"
+DATAID = "R53P95G3cV93UMlKAAB0-7"
 
 SAVE_LOCATION = "../data/"
 
