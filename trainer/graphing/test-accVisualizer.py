@@ -14,7 +14,7 @@ from sklearn.preprocessing import normalize as skNorm
 #dataFile = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #normal data
 
-dataFile = pd.read_csv("../data/trainsequences/training-rest-YMC7P3YkjqkuwNUIAABe-5.csv", header=0)
+dataFile = pd.read_csv("../data/FLAWED/lessthan1period/updown-35-49-R53P95G3cV93UMlKAAB0-3_1.csv", header=0)
 da = DataAnalyzer.DataAnalyzer()
 
 
@@ -29,7 +29,7 @@ dataNorm['accZ'] = skNorm(dataNorm['accZ'])[0]
 
 
 #dataFile = da.normalize(dataFile)
-dataFile = da.autoCorrelate(dataFile)
+#dataFile = da.autoCorrelate(dataFile)
 
 
 

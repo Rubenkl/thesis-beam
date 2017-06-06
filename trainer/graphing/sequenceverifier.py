@@ -7,14 +7,14 @@ from helpers import DataAnalyzer
 #dataFile = pd.read_csv("../../data/training-updown-avkfxrmpauHdDpeaAAAa-1.csv", header=0)
 #normal data
 
-PERIODS = 1
-STARTING_PERIOD = 9
+PERIODS = 2
+STARTING_PERIOD = 2
 WRITE = True
 DATAFILE_NUMBER = 1
-DATAFILE = "../data/testing-rotateclockwise-R53P95G3cV93UMlKAAB0-7.csv"
-DATAID = "R53P95G3cV93UMlKAAB0-7"
+DATAFILE = "../data/testing-leftright-EDyPQA6xSv7NITQZAACk-4.csv"
+DATAID = "EDyPQA6xSv7NITQZAACk-4"
 
-SAVE_LOCATION = "../data/"
+SAVE_LOCATION = "../data/trainsequences/"
 
 #------------------------------------ 
 

@@ -16,9 +16,10 @@ from helpers import DataAnalyzer, FolderWatch, Socket
 
 DATA_FOLDER = "../data/good-backup-10seconds/"
 SEQUENCE_FOLDER = "../data/trainsequences/"
+ADDITIONAL_TRAIN_FOLDER = "../data/FLAWED/ADDITIONAL-TRAINED/"
 
-CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY/"
-CLASSIFY_SAVE_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY-sequences/"
+CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/CLASSIFY/"
+CLASSIFY_SAVE_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-beam/trainer/data/CLASSIFY-sequences/"
 
 
 # Helper functions:
@@ -52,20 +53,24 @@ training_data_length = []
 files = getDataFileNames("", dataFolder=SEQUENCE_FOLDER)
 for trainingFile in files:
   dataFile = pd.read_csv(SEQUENCE_FOLDER + trainingFile, header = 0)
-  #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  
-  #dataFile = analyzer.normalize(dataFile)
-  #dataFile = analyzer.autoCorrelate(dataFile)
 
-  #autoAnalyzer = DataAnalyzer.AutoAnalyzer(dataFile)
-  #get first peak, then autoanalyze
-  
-  #output = autoAnalyzer.getLastPeakTime(periods=2, startingPeriod=1)
-  #peakIndex = output['index']
-  #periodData = autoAnalyzer.getPeriodsFromDataIndex(1, peakIndex)['data']
+  training_data.append(dataFile)
+  if "updown" in trainingFile:
+    training_labels.append("updown")
+  elif "leftright" in trainingFile:
+    training_labels.append("leftright")
+  elif "rotateclock" in trainingFile:
+    training_labels.append("rotateclockwise")
+  elif "square" in trainingFile:
+    training_labels.append("square")
+  elif "rest" in trainingFile:
+    training_labels.append("rest")
 
-  #periodData = autoAnalyzer.getPeriods(1, startIndexPeriod=1)['data']
-  
+#Additional flawed training data
+files = getDataFileNames("", dataFolder=ADDITIONAL_TRAIN_FOLDER)
+for trainingFile in files:
+  dataFile = pd.read_csv(ADDITIONAL_TRAIN_FOLDER + trainingFile, header = 0)
+
   training_data.append(dataFile)
   if "updown" in trainingFile:
     training_labels.append("updown")

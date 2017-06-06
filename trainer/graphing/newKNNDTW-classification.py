@@ -12,7 +12,9 @@ import os #filesystem reads
 
 from helpers import DataAnalyzer, FolderWatch
 
-DATA_FOLDER = "../data/"
+DATA_FOLDER = "../data/trainsequences/"
+ADDITIONAL_TRAIN_FOLDER = "../data/FLAWED/ADDITIONAL-TRAINED/"
+TEST_FOLDER = "../data/good-backup-10seconds/"
 CLASSIFY_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesis/trainer/data/CLASSIFY"
 
 
@@ -41,12 +43,12 @@ training_data = []
 training_labels = []
 training_data_length = []
 
-files = getDataFileNames("training")
+files = getDataFileNames("")
 for trainingFile in files:
   dataFile = pd.read_csv(DATA_FOLDER + trainingFile, header = 0)
   #data = [dataFile['alpha'], dataFile['beta'], dataFile['gamma'], dataFile['accX'], dataFile['accY'], dataFile['accZ']]
-  dataFile = analyzer.normalize(dataFile)
-  dataFile = analyzer.autoCorrelate(dataFile)
+  #dataFile = analyzer.normalize(dataFile)
+  #dataFile = analyzer.autoCorrelate(dataFile)
   
   training_data.append(dataFile)
   if "updown" in trainingFile:
@@ -55,6 +57,12 @@ for trainingFile in files:
     training_labels.append("leftright")
   elif "rotateclock" in trainingFile:
     training_labels.append("rotateclockwise")
+  elif "rest" in trainingFile:
+    training_labels.append("rest")
+
+
+
+
 
 print("label size:", len(training_data))
 print("data size:", len(training_labels))
@@ -156,7 +164,6 @@ def classify(classiFile):
     #print("classifying: " + previousFile)
 
     dataFile = pd.read_csv(previousFile, header=0)
-    print('state1')
 
     try:
       print("trying...")

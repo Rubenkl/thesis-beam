@@ -24,6 +24,9 @@ ADDITIONAL_TEST_FOLDER = "C:/Users/Ruben/Dropbox/Coding/GIT/Thesisclone/thesis-b
 ITERATIONS = 400
 TEST_SIZE_PERCENT = 0.30
 
+#Keep this number the same if you want to compare classifiers using paired tests
+PSEUDO_RANDOM = 1337
+
 np.set_printoptions(precision=2)
 
 
@@ -143,6 +146,7 @@ predict_labels = []
 
 print("label size:", len(data_data))
 print("data size:", len(data_labels))
+print("additional data size: ", len(additional_data))
 print("---------")
 
 
@@ -155,7 +159,7 @@ print("---------")
 correct = []
 for i in range(ITERATIONS):
   print("Iteration " + str(i+1) + "/" + str(ITERATIONS))
-  training_data, test_data, training_labels, test_labels = train_test_split(data_data, data_labels, test_size=TEST_SIZE_PERCENT)
+  training_data, test_data, training_labels, test_labels = train_test_split(data_data, data_labels, test_size=TEST_SIZE_PERCENT, random_state=PSEUDO_RANDOM+i)
 
 
   #------------------- ADDITIONAL TRAINING FILES ---------------------
